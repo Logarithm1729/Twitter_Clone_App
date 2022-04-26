@@ -1,0 +1,42 @@
+version: '3'
+
+volumes:
+  db_volume:
+
+services:
+  db:
+    container_name: django_db
+    image: postgres
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=Logarithm
+    ports:
+      - 5432:5432
+  backend:
+    container_name: django_rest_api
+    build: 
+      context: .
+      dockerfile: DockerfileBack
+    volumes:
+      - ./backend:/code
+    tty: true
+    stdin_open: true
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+  frontend:
+    container_name: front_node_js
+    build: 
+      context: .
+      dockerfile: DockerfileFront
+    volumes:
+      - ./frontend:/code
+    tty: true
+    stdin_open: true
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
