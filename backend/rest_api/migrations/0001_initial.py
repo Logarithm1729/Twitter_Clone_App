@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('password', models.CharField(max_length=128, verbose_name='password')),
                 ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
-                ('id', models.CharField(default=rest_api.models.user_models.create_user_id, editable=False, max_length=30, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=rest_api.models.user_models.create_id, editable=False, max_length=30, primary_key=True, serialize=False)),
                 ('email', models.EmailField(max_length=255, unique=True, verbose_name='Email')),
                 ('is_active', models.BooleanField(default=True)),
                 ('is_admin', models.BooleanField(default=False)),
@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Profile',
             fields=[
-                ('id', models.CharField(default=rest_api.models.user_models.create_user_id, editable=False, max_length=30, primary_key=True, serialize=False)),
+                ('id', models.CharField(default=rest_api.models.user_models.create_id, editable=False, max_length=30, primary_key=True, serialize=False)),
                 ('user_id', models.CharField(default='', max_length=50, unique=True)),
                 ('username', models.CharField(blank=True, default='', max_length=30)),
                 ('first_name', models.CharField(blank=True, default='', max_length=30)),
