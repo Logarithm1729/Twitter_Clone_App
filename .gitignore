@@ -21,3 +21,5 @@
 /frontend/yarn-error.log*
 
 /backend/secrets
+
+__pycache__/
