@@ -17,4 +17,5 @@ urlpatterns = [
     path('user/detail/<str:pk>/', views.UserPkAPIView.as_view()),
     
     path('compose/', include(router.urls)),
+    path('compose/myprofile/', views.MyProfileAPIView.as_view()),
 ]

@@ -52,3 +52,9 @@ class ProfileViewSet(viewsets.ModelViewSet):
 class FollowViewSet(viewsets.ModelViewSet):
     queryset = models.Follow.objects.all()
     serializer_class = serializers.FollowSerializer
+
+class MyProfileAPIView(views.APIView):
+    def get(self, request, pk, *args, **kwargs):
+        my_prof = models.Profile.objects.get(pk=pk)
+        serializer = serializers.ProfileSerializer(my_prof)
+        return Response(serializer.data, status.HTTP_200_OK)

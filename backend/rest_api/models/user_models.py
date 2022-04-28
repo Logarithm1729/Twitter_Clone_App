@@ -13,8 +13,11 @@ def create_path_of_prof_image(instance, filename):
     uploaded_time = dt_now.strftime('%Y_%m_%d_%H_%M_%S_%f')
     return os.path.join('user_images', user_id, uploaded_time, filename)
 
-def create_user_id():
+def create_id():
     return get_random_string(30)
+
+def create_unique_user_id():
+    return get_random_string(50)
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None):
@@ -39,7 +42,7 @@ class UserManager(BaseUserManager):
         return user
 
 class User(AbstractBaseUser, PermissionsMixin):
-    id = models.CharField(max_length=30, default=create_user_id, editable=False, primary_key=True)
+    id = models.CharField(max_length=30, default=create_id, editable=False, primary_key=True)
     email = models.EmailField(
         'Email',
         max_length=255,
@@ -70,8 +73,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Profile(models.Model):
-    id = models.CharField(max_length=30, default=create_user_id, editable=False, primary_key=True)
-    user_id = models.CharField(max_length=50, unique=True, default='', blank=False)
+    id = models.CharField(max_length=30, default=create_id, editable=False, primary_key=True)
+    user_id = models.CharField(max_length=50, unique=True, default=create_unique_user_id, blank=False)
     username = models.CharField(max_length=30, blank=True, default='')
     first_name = models.CharField(max_length=30, blank=True, default='')
     last_name = models.CharField(max_length=30, blank=True, default='')
