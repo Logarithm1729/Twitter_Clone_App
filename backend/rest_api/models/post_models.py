@@ -21,17 +21,19 @@ class Post(models.Model):
     content = models.TextField(max_length=300, default='')
     post_image = models.ImageField(upload_to=create_path_of_posts_image, null=True, blank=True)
     userPost = models.ForeignKey(User, on_delete=models.CASCADE, related_name='Contributer')
-    created_on = models.DateTimeField(auto_now_add=True)
-    updated_on = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at', 'id']
 
     def __str__(self):
         return f'{self.title}__[{self.id}]'
 
 class Comment(models.Model):
+    comment = models.TextField(max_length=100)
     postComment = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='postComment')
     userComment = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userComment')
-    created_on = models.DateTimeField(auto_now_add=True)
-    updated_on = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class Like(models.Model):
     userLike = models.ForeignKey(User, on_delete=models.CASCADE, related_name='userLike')

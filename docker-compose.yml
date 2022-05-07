@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 volumes:
   db_volume:
@@ -6,7 +6,7 @@ volumes:
 services:
   db:
     container_name: django_db
-    image: postgres
+    image: postgres:11.2
     volumes:
       - db_volume:/var/lib/postgresql/data
     environment:
@@ -16,7 +16,7 @@ services:
       - 5432:5432
   backend:
     container_name: django_rest_api
-    build: 
+    build:
       context: .
       dockerfile: DockerfileBack
     volumes:
@@ -25,11 +25,12 @@ services:
     stdin_open: true
     ports:
       - 8000:8000
+    restart: always
     depends_on:
       - db
   frontend:
     container_name: front_node_js
-    build: 
+    build:
       context: .
       dockerfile: DockerfileFront
     volumes:
@@ -38,5 +39,6 @@ services:
     stdin_open: true
     ports:
       - 3000:3000
+    restart: always
     depends_on:
       - backend

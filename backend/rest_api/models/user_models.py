@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.utils.crypto import get_random_string
 from django.contrib.auth import get_user_model
+from django.db.models.signals import post_save
 
 
 def create_path_of_prof_image(instance, filename):
@@ -17,7 +18,7 @@ def create_id():
     return get_random_string(30)
 
 def create_unique_user_id():
-    return get_random_string(50)
+    return get_random_string(10)
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None):
@@ -74,10 +75,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Profile(models.Model):
     id = models.CharField(max_length=30, default=create_id, editable=False, primary_key=True)
-    user_id = models.CharField(max_length=50, unique=True, default=create_unique_user_id, blank=False)
+    user_id = models.CharField(max_length=30, unique=True, default=create_unique_user_id, blank=False)
     username = models.CharField(max_length=30, blank=True, default='')
-    first_name = models.CharField(max_length=30, blank=True, default='')
-    last_name = models.CharField(max_length=30, blank=True, default='')
     age = models.PositiveIntegerField(default=0, blank=True)
     prof_image = models.ImageField(upload_to=create_path_of_prof_image, default='', null=True, blank=True)
     userProfile = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='related_user')
@@ -86,6 +85,16 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user_id
+
+"""なぜかReactでのプロフィール作製が上手く行かないため、シグナルでユーザー作製時にプロフィールを作製"""
+def creating_profile_on_create_user(sender, instance, created, **kwargs):
+    if created:
+        profile = Profile(userProfile=instance)
+        profile.username = '未設定'
+        profile.save()
+
+post_save.connect(creating_profile_on_create_user, sender=User)
+
 
 class Follow(models.Model):
     userFollowing = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='following')

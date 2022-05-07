@@ -4,7 +4,7 @@ from rest_framework import routers
 from . import views
 
 
-router = routers.DefaultRouter()
+router = routers.SimpleRouter()
 router.register('posts', views.PostViewSet)
 router.register('comments', views.CommentViewSet)
 router.register('likes', views.LikeViewSet)

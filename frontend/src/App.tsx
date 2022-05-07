@@ -1,12 +1,18 @@
-import React from 'react';
-import './App.css';
+import React, { useEffect } from "react";
+import styles from "./App.module.css";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+
+import { Core } from "./features/core/Core";
+import { endLogin, startLogin } from "./features/auth/authSlice";
+
 
 function App() {
+  const dispatch = useDispatch();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Hello World</h1>
-      </header>
+    <div className={styles.app}>
+      <Core />
     </div>
   );
 }

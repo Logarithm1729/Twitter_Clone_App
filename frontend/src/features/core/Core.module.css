@@ -1,0 +1,13 @@
+.core_container {
+  height: 100%;
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgba(72, 72, 72, 0.112);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+}
+/*# sourceMappingURL=Core.module.css.map */

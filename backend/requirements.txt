@@ -6,3 +6,4 @@ djoser
 pillow
 django-cors-headers
 django-environ
+mysqlclient

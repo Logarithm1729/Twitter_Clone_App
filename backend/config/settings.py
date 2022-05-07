@@ -82,6 +82,17 @@ SIMPLE_JWT = {
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'twitter_clone',
+#         'USER': 'admin',
+#         'PASSWORD': 'logarithm',
+#         'HOST': 'db',
+#         'PORT': 3306,
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
