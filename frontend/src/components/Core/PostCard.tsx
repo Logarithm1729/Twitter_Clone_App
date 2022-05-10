@@ -13,21 +13,25 @@ import { red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useDispatch, useSelector } from "react-redux";
 import CreateIcon from "@mui/icons-material/Create";
 import { Formik } from "formik";
 import { Button, Stack, TextField } from "@mui/material";
 import { Box } from "@mui/system";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 import { selectAllProfiles } from "../../features/auth/authSlice";
 import { AppDispatch } from "../../app/store";
 import {
   asyncCommentCreate,
+  asyncDeleteComment,
   asyncGetAllComments,
   asyncGetAllPosts,
+  endIsPosting,
   selectComments,
+  startIsPosting,
 } from "../../features/post/postSlice";
+import PostSettingButton from "./PostSettingButton";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -39,7 +43,7 @@ interface PROPS_POST {
   content: string | undefined;
   post_image: string | File | undefined;
   created_at: string;
-  userPost: number | string;
+  userPost: string;
 }
 
 const ExpandMore = styled((props: ExpandMoreProps) => {
@@ -71,22 +75,20 @@ export const PostCard = (props: PROPS_POST) => {
 
   const getRelatedComment = allComments.filter((comment) => {
     return comment.postComment === post_id;
-  })
+  });
 
   return (
     <Card sx={{ boxShadow: "none", borderRadius: "none" }}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            R
+            A
           </Avatar>
         }
         action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
+            <PostSettingButton post_id={post_id} userPost={userPost} />
         }
-        // title={prof[0].username}
+        title={title}
         subheader={created_at}
       />
       {post_image && (
@@ -126,8 +128,11 @@ export const PostCard = (props: PROPS_POST) => {
             onSubmit={async (values) => {
               const res = await dispatch(asyncCommentCreate(values));
               if (asyncCommentCreate.fulfilled.match(res)) {
+                await dispatch(startIsPosting());
                 await dispatch(asyncGetAllPosts());
                 await dispatch(asyncGetAllComments());
+                values.comment = "";
+                await dispatch(endIsPosting());
               }
             }}
           >
@@ -163,7 +168,21 @@ export const PostCard = (props: PROPS_POST) => {
             )}
           </Formik>
           {getRelatedComment.map((com) => {
-            return <Typography paragraph>{com.comment}</Typography>
+            return (
+              <Typography paragraph key={com.id}>
+                <Box sx={{'display': 'flex', 'alignItems': 'center', 'padding': '5px 10px'}}>
+                  <Box>{com.comment}</Box>
+                  <Button
+                    onClick={async () => {
+                      await dispatch(asyncDeleteComment(com.id));
+                      await dispatch(asyncGetAllComments());
+                    }}
+                  >
+                    <DeleteIcon />
+                  </Button>
+                </Box>
+              </Typography>
+            );
           })}
         </CardContent>
       </Collapse>

@@ -14,6 +14,6 @@ export interface POST_GET_RESPONCE {
   title: string;
   content: string;
   post_image: string;
-  userPost: number;
+  userPost: string;
   created_at: string;
 }

@@ -102,6 +102,7 @@ export const asyncUpdateMyProfile = createAsyncThunk(
   async (prof_info: PROFILE) => {
     const uploadData = new FormData();
     uploadData.append("id", prof_info.id);
+    uploadData.append("userProfile", prof_info.userProfile);
     prof_info.user_id && uploadData.append("user_id", prof_info.user_id);
     prof_info.username && uploadData.append("username", prof_info.username);
     prof_info.age && uploadData.append("age", String(prof_info.age));
@@ -152,7 +153,7 @@ export const authSlice = createSlice({
       username: "",
       age: 0,
       prof_image: "",
-      userProfile: 0,
+      userProfile: "",
     },
     allProfiles: [
       {
@@ -161,12 +162,12 @@ export const authSlice = createSlice({
         username: "",
         age: 0,
         prof_image: "",
-        userProfile: 0,
+        userProfile: "",
       },
     ],
     follow: {
-      userFollowing: 0,
-      userFollower: 0,
+      userFollowing: "",
+      userFollower: "",
     },
   },
   reducers: {

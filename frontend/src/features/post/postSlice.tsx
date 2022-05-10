@@ -43,6 +43,21 @@ export const asyncGetAllPosts = createAsyncThunk("post/get/all", async () => {
   return res.data;
 });
 
+export const asyncDeletePost = createAsyncThunk(
+  "post/delete",
+  async (post_id: string) => {
+    const res = await axios.delete(
+      `${api_url}/rest_api/compose/posts/${post_id}/`,
+      {
+        headers: {
+          Authorization: `JWT ${localStorage.localJWT}`,
+        },
+      }
+    );
+    return res.data;
+  }
+);
+
 export const asyncCommentCreate = createAsyncThunk(
   "comment/create",
   async (comment_info: COMMENT_CREATE) => {
@@ -68,6 +83,22 @@ export const asyncGetAllComments = createAsyncThunk("comment/get", async () => {
   return res.data;
 });
 
+export const asyncDeleteComment = createAsyncThunk(
+  "comment/delete",
+  async (comment_id: number) => {
+    const res = await axios.delete(
+      `${api_url}/rest_api/compose/comments/${comment_id}/`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `JWT ${localStorage.localJWT}`,
+        },
+      }
+    );
+    return res.data;
+  }
+);
+
 export const postSlice = createSlice({
   name: "post",
   initialState: {
@@ -79,13 +110,14 @@ export const postSlice = createSlice({
         title: "",
         content: "",
         post_image: "",
-        userPost: 0,
+        userPost: "",
         created_at: "",
       },
     ],
     comments: [
       {
-        comment: 0,
+        id: 0,
+        comment: "",
         postComment: "",
         userComment: "",
         created_at: "",
@@ -93,9 +125,9 @@ export const postSlice = createSlice({
     ],
     likes: [
       {
-        userLike: 0,
-        postLike: 0,
-        commentLike: 0,
+        userLike: "",
+        postLike: "",
+        commentLike: "",
       },
     ],
   },

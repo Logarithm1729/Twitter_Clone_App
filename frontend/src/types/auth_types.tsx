@@ -12,8 +12,8 @@ export interface PROFILE {
   user_id: string;
   username: string | undefined;
   age: number | undefined;
-  prof_image: string | undefined;
-  userProfile: number;
+  prof_image: string | undefined | null;
+  userProfile: string;
 }
 
 export interface REGISTER_PROFILE {
@@ -25,6 +25,6 @@ export interface PROFILE_ID {
 }
 
 export interface FOLLOW {
-  userFollowing: number;
-  userFollower: number;
+  userFollowing: string;
+  userFollower: string;
 }

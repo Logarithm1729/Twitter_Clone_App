@@ -6,7 +6,11 @@ import { Auth } from "../auth/Auth";
 import { Post } from "../post/Post";
 import styles from "./Core.module.css";
 import { AppDispatch } from "../../app/store";
-import { asyncGetAllComments, asyncGetAllPosts, startOpenNewPost } from "../post/postSlice";
+import {
+  asyncGetAllComments,
+  asyncGetAllPosts,
+  startOpenNewPost,
+} from "../post/postSlice";
 import { LeftAppbar } from "../../components/Core/LeftAppbar";
 import { PostCard } from "../../components/Core/PostCard";
 import { selectPosts } from "../post/postSlice";
@@ -15,8 +19,12 @@ import {
   asyncGetAllProfiles,
   asyncGetMyProfile,
   endSignIn,
+  startProfile,
   startSignIn,
 } from "../auth/authSlice";
+import { TopUserbar } from "../../components/Core/TopUserbar";
+import { HomeNewPostForm } from "../../components/Core/HomeNewPostForm";
+import { MyProfileModal } from "../../components/Auth/MyProfileModal";
 
 // const barWidth = { xs: "20%", sm: "15%", md: "10%" };
 const tweetListWidth = { xs: "80%", sm: "85%", md: "90%" };
@@ -46,9 +54,15 @@ export const Core = () => {
     <div className={styles.core_container}>
       <Auth />
       <Post />
-      <LeftAppbar AddIconFunc={() => dispatch(startOpenNewPost())} />
+      <LeftAppbar
+        AddIconFunc={() => dispatch(startOpenNewPost())}
+        PersonIconFunc={() => dispatch(startProfile())}
+      />
+      <MyProfileModal />
       <Box width={tweetListWidth}>
-        <Stack>
+        <TopUserbar />
+        <Stack sx={{ paddingTop: "50px", zIndex: "100", position: "relative" }}>
+          <HomeNewPostForm />
           {posts.map((post) => (
             <div key={post.id}>
               <PostCard
