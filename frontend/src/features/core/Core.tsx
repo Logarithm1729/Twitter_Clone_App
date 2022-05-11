@@ -9,6 +9,7 @@ import { AppDispatch } from "../../app/store";
 import {
   asyncGetAllComments,
   asyncGetAllPosts,
+  asyncGetLikes,
   startOpenNewPost,
 } from "../post/postSlice";
 import { LeftAppbar } from "../../components/Core/LeftAppbar";
@@ -45,6 +46,7 @@ export const Core = () => {
         await dispatch(asyncGetAllProfiles());
         await dispatch(asyncGetAllPosts());
         await dispatch(asyncGetAllComments());
+        await dispatch(asyncGetLikes());
       }
     };
     fetchBootLoader();

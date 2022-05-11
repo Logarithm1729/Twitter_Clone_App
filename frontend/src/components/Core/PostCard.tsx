@@ -12,23 +12,31 @@ import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useDispatch, useSelector } from "react-redux";
 import CreateIcon from "@mui/icons-material/Create";
 import { Formik } from "formik";
 import { Button, Stack, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import DeleteIcon from "@mui/icons-material/Delete";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import ChatIcon from '@mui/icons-material/Chat';
 
-import { selectAllProfiles } from "../../features/auth/authSlice";
+import {
+  selectAllProfiles,
+  selectMyprofile,
+} from "../../features/auth/authSlice";
 import { AppDispatch } from "../../app/store";
 import {
   asyncCommentCreate,
   asyncDeleteComment,
+  asyncDeleteLike,
   asyncGetAllComments,
   asyncGetAllPosts,
+  asyncGetLikes,
+  asyncPushLike,
   endIsPosting,
   selectComments,
+  selectLike,
   startIsPosting,
 } from "../../features/post/postSlice";
 import PostSettingButton from "./PostSettingButton";
@@ -68,26 +76,45 @@ export const PostCard = (props: PROPS_POST) => {
 
   const allProfiles = useSelector(selectAllProfiles);
   const allComments = useSelector(selectComments);
+  const myprofile = useSelector(selectMyprofile);
+  const likes = useSelector(selectLike);
 
   const prof = allProfiles.filter((prof) => {
     return prof.userProfile === userPost;
   });
 
-  const getRelatedComment = allComments.filter((comment) => {
+  const relatedComments = allComments.filter((comment) => {
     return comment.postComment === post_id;
   });
 
+  const likesRelatedMe = likes.filter(
+    (like) => like.userLike === myprofile.userProfile
+  );
+
+  const likesRelatedPost = likesRelatedMe.filter(
+    (like) => like.postLike === post_id
+  );
+
+  const isLiked = () => {
+    if (likesRelatedPost.length === 0) {
+      return false;
+    } else if (likesRelatedPost.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+
   return (
-    <Card sx={{ boxShadow: "none", borderRadius: "none" }}>
+    <Card sx={{ boxShadow: "none", borderRadius: "none", 'borderBottom': 'solid #0000002b 1px'}}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
             A
           </Avatar>
         }
-        action={
-            <PostSettingButton post_id={post_id} userPost={userPost} />
-        }
+        action={<PostSettingButton post_id={post_id} userPost={userPost} />}
         title={title}
         subheader={created_at}
       />
@@ -105,8 +132,37 @@ export const PostCard = (props: PROPS_POST) => {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <FavoriteIcon />
+        <IconButton
+          aria-label="add to favorites"
+          onClick={async () => {
+            await dispatch(startIsPosting());
+            if (!isLiked()) {
+              const res = await dispatch(
+                asyncPushLike({
+                  userLike: myprofile.userProfile,
+                  postLike: post_id,
+                })
+              );
+              if (asyncPushLike.fulfilled.match(res)) {
+                await dispatch(asyncGetLikes());
+                await dispatch(endIsPosting());
+              }
+            } else {
+              const res = await dispatch(
+                asyncDeleteLike(likesRelatedPost[0].id)
+              );
+              if (asyncDeleteLike.fulfilled.match(res)) {
+                await dispatch(asyncGetLikes());
+                await dispatch(endIsPosting());
+              }
+            }
+          }}
+        >
+          {isLiked() ? (
+            <FavoriteIcon sx={{ color: "#ff7b9b" }} />
+          ) : (
+            <FavoriteBorderIcon />
+          )}
         </IconButton>
         <IconButton aria-label="share">
           <ShareIcon />
@@ -117,12 +173,12 @@ export const PostCard = (props: PROPS_POST) => {
           aria-expanded={expanded}
           aria-label="show more"
         >
-          <ExpandMoreIcon />
+          <ChatIcon />
         </ExpandMore>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          <Typography paragraph>コメント欄</Typography>
+        <CardContent sx={{'border': 'solid #0000002b 1px','borderRadius': '20px' , 'margin': '10px'}}>
+          <Typography paragraph sx={{'fontSize': '20px', 'fontWeight': '600'}}>コメント欄</Typography>
           <Formik
             initialValues={{ comment: "", postComment: post_id }}
             onSubmit={async (values) => {
@@ -153,7 +209,7 @@ export const PostCard = (props: PROPS_POST) => {
                       type="text"
                       name="comment"
                       onChange={handleChange}
-                      label="コメント"
+                      label="返信をツイート"
                       onBlur={handleBlur}
                       size="small"
                       variant="outlined"
@@ -167,10 +223,16 @@ export const PostCard = (props: PROPS_POST) => {
               </Box>
             )}
           </Formik>
-          {getRelatedComment.map((com) => {
+          {relatedComments.map((com) => {
             return (
-              <Typography paragraph key={com.id}>
-                <Box sx={{'display': 'flex', 'alignItems': 'center', 'padding': '5px 10px'}}>
+              <Box key={com.id}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "5px 10px",
+                  }}
+                >
                   <Box>{com.comment}</Box>
                   <Button
                     onClick={async () => {
@@ -178,10 +240,12 @@ export const PostCard = (props: PROPS_POST) => {
                       await dispatch(asyncGetAllComments());
                     }}
                   >
-                    <DeleteIcon />
+                    {com.userComment === myprofile.userProfile && (
+                      <DeleteIcon />
+                    )}
                   </Button>
                 </Box>
-              </Typography>
+              </Box>
             );
           })}
         </CardContent>

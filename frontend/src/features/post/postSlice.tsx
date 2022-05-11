@@ -5,9 +5,12 @@ import {
   COMMENT_CREATE,
   POST_CREATE,
   POST_GET_RESPONCE,
+  PUSH_LIKE,
 } from "../../types/post_types";
 
 const api_url = "http://localhost:8000";
+
+// Post fields
 
 export const asyncPostCreate = createAsyncThunk(
   "post/create",
@@ -58,6 +61,8 @@ export const asyncDeletePost = createAsyncThunk(
   }
 );
 
+// Comment fields
+
 export const asyncCommentCreate = createAsyncThunk(
   "comment/create",
   async (comment_info: COMMENT_CREATE) => {
@@ -99,6 +104,48 @@ export const asyncDeleteComment = createAsyncThunk(
   }
 );
 
+// Like fields
+
+export const asyncPushLike = createAsyncThunk(
+  "like/post",
+  async (like_info: PUSH_LIKE) => {
+    const res = await axios.post(
+      `${api_url}/rest_api/compose/likes/`,
+      like_info,
+      {
+        headers: { Authorization: `JWT ${localStorage.localJWT}` },
+      }
+    );
+    return res.data;
+  }
+);
+
+export const asyncDeleteLike = createAsyncThunk(
+  "like/delete",
+  async (like_id: number) => {
+    const res = await axios.delete(
+      `${api_url}/rest_api/compose/likes/${like_id}/`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `JWT ${localStorage.localJWT}`,
+        },
+      }
+    );
+    return res.data;
+  }
+);
+
+export const asyncGetLikes = createAsyncThunk("like/get", async () => {
+  const res = await axios.get(`${api_url}/rest_api/compose/likes/`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `JWT ${localStorage.localJWT}`,
+    },
+  });
+  return res.data;
+});
+
 export const postSlice = createSlice({
   name: "post",
   initialState: {
@@ -125,9 +172,9 @@ export const postSlice = createSlice({
     ],
     likes: [
       {
+        id: 0,
         userLike: "",
         postLike: "",
-        commentLike: "",
       },
     ],
   },
@@ -154,6 +201,12 @@ export const postSlice = createSlice({
     });
     builder.addCase(asyncGetAllComments.fulfilled, (state, action) => {
       state.comments = action.payload;
+    });
+    builder.addCase(asyncPushLike.fulfilled, (state, action) => {
+      state.likes = [...state.likes, action.payload];
+    });
+    builder.addCase(asyncGetLikes.fulfilled, (state, action) => {
+      state.likes = action.payload;
     });
   },
 });

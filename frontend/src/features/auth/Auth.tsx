@@ -28,6 +28,7 @@ import {
 import {
   asyncGetAllComments,
   asyncGetAllPosts,
+  asyncGetLikes,
   selectOpenNewPost,
 } from "../post/postSlice";
 
@@ -94,6 +95,7 @@ export const Auth: React.FC = () => {
                   await dispatch(asyncGetAllProfiles());
                   await dispatch(asyncGetAllPosts());
                   await dispatch(asyncGetAllComments());
+                  await dispatch(asyncGetLikes());
                   await dispatch(endSignIn());
                   await dispatch(startLogin());
                   await dispatch(endLoading());
@@ -203,6 +205,7 @@ export const Auth: React.FC = () => {
                   await dispatch(asyncGetAllProfiles());
                   await dispatch(asyncGetAllPosts());
                   await dispatch(asyncGetAllComments());
+                  await dispatch(asyncGetLikes());
                   await dispatch(endSignUp());
                   await dispatch(startLogin());
                   await dispatch(endLoading());

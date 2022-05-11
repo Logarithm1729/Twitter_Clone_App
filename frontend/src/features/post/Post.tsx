@@ -33,7 +33,7 @@ const customStyle = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 450,
-  height: 320,
+  height: 400,
   bgcolor: "white",
   boxShadow: 24,
   pt: 2,
@@ -52,7 +52,7 @@ export const Post = () => {
   const dispatch: AppDispatch = useDispatch();
   const openNewPost = useSelector(selectOpenNewPost);
   const isPosting = useSelector(selectIsPosting);
-  const isLogin = useSelector(selectIsLogin); 
+  const isLogin = useSelector(selectIsLogin);
 
   return (
     <div>
@@ -89,6 +89,7 @@ export const Post = () => {
                   style={{ top: "0", left: "0" }}
                   onClick={() => dispatch(endOpenNewPost())}
                 />
+                <h2 style={{ textAlign: "center", 'margin': '0' }}>新しいツイート</h2>
                 <form onSubmit={handleSubmit} className={styles.post_form}>
                   <Stack
                     sx={{
