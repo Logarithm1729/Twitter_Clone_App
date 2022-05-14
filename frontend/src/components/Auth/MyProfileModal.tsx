@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import Modal from "@mui/material/Modal";
 import { Box } from "@mui/system";
 import { useDispatch, useSelector } from "react-redux";
 import CloseIcon from "@mui/icons-material/Close";
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 
 import {
+  asyncGetAllProfiles,
   asyncGetMyProfile,
   asyncUpdateMyProfile,
   endLoading,
@@ -15,7 +17,10 @@ import {
 } from "../../features/auth/authSlice";
 import { AppDispatch } from "../../app/store";
 import { Formik } from "formik";
-import { Button, TextField } from "@mui/material";
+import { Button, IconButton, TextField } from "@mui/material";
+import { PhotoCamera } from "@mui/icons-material";
+import { UploadButton } from "./UploadButton";
+import { PROFILE } from "../../types/auth_types";
 
 const customStyle = {
   position: "absolute" as "absolute",
@@ -43,6 +48,35 @@ export const MyProfileModal = () => {
   const myprofile = useSelector(selectMyprofile);
   const dispatch: AppDispatch = useDispatch();
 
+  const [image, setImage] = useState(null);
+  const [userId, setUserId] = useState(myprofile.user_id);
+  const [username, setUsername] = useState(myprofile.username);
+  const [age, setAge] = useState(myprofile.age);
+
+  const connectSpanToInput = () => {
+    const target = document.getElementById("profile-image");
+    target?.click();
+  };
+
+  const onClickUpload = async () => {
+    await dispatch(startLoading());
+    const profData = {
+      id: myprofile.id,
+      prof_image: image,
+      user_id: userId,
+      username: username,
+      age: age,
+      userProfile: myprofile.userProfile,
+    };
+    const res = await dispatch(asyncUpdateMyProfile(profData));
+    if (asyncUpdateMyProfile.fulfilled.match(res)) {
+      await dispatch(asyncGetAllProfiles());
+      await dispatch(asyncGetMyProfile());
+      await dispatch(endProfile());
+      await dispatch(endLoading());
+    }
+  };
+
   return (
     <Modal
       open={openProfile}
@@ -50,100 +84,76 @@ export const MyProfileModal = () => {
       aria-describedby="modal-modal-description"
     >
       <Box sx={customStyle}>
-        <Formik
-          initialValues={{
-            id: myprofile.id,
-            userProfile: myprofile.userProfile,
-            user_id: myprofile.user_id,
-            username: myprofile.username,
-            age: myprofile.age,
-            prof_image: myprofile.prof_image,
-          }}
-          onSubmit={async (values) => {
-            await dispatch(startLoading());
-            const res = await dispatch(asyncUpdateMyProfile(values));
-            if (asyncUpdateMyProfile.fulfilled.match(res)) {
-              await dispatch(endProfile());
-              await dispatch(asyncGetMyProfile());
-              await dispatch(endLoading());
-            }
-          }}
-        >
-          {({
-            values,
-            errors,
-            touched,
-            handleBlur,
-            handleSubmit,
-            handleChange,
-            isValid,
-          }) => (
-            <Box sx={{ width: "100%", height: "100%" }}>
-              <CloseIcon
-                sx={{ top: "0", left: "0", cursor: "pointer" }}
-                onClick={() => dispatch(endProfile())}
-              />
-              <form onSubmit={handleSubmit}>
-                <Box
-                  display="flex"
-                  sx={{
-                    flexDirection: "column",
-                    alignItems: "center",
-                  }}
-                >
-                  <h2 style={{ marginBottom: "10px" }}>プロフィール</h2>
-                  <img
-                    src={
-                      myprofile.prof_image
-                        ? myprofile.prof_image
-                        : "https://source.unsplash.com/random"
-                    }
-                    width="150px"
-                    height="150px"
-                    style={{
-                      objectFit: "cover",
-                      borderRadius: "50%",
-                      marginBottom: "10px",
-                    }}
-                  />
-                  <TextField
-                    type="text"
-                    name="user_id"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    label="ユーザーID"
-                    defaultValue={values.user_id}
-                    variant="standard"
-                    sx={{ marginBottom: "10px", width: "70%" }}
-                  />
-                  <TextField
-                    type="text"
-                    name="username"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    label="ユーザー名"
-                    defaultValue={values.username}
-                    variant="standard"
-                    sx={{ marginBottom: "10px", width: "70%" }}
-                  />
-                  <TextField
-                    type="number"
-                    name="age"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    label="年齢"
-                    defaultValue={values.age}
-                    variant="standard"
-                    sx={{ marginBottom: "20px", width: "70%" }}
-                  />
-                  <Button type="submit" variant="contained">
-                    更新する
-                  </Button>
-                </Box>
-              </form>
-            </Box>
-          )}
-        </Formik>
+        <Box sx={{ width: "100%", height: "100%" }}>
+          <CloseIcon
+            sx={{ top: "0", left: "0", cursor: "pointer" }}
+            onClick={() => dispatch(endProfile())}
+          />
+          <Box
+            display="flex"
+            sx={{
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <h2 style={{ marginBottom: "10px" }}>プロフィール</h2>
+            <img
+              src={
+                myprofile.prof_image
+                  ? myprofile.prof_image
+                  : "https://source.unsplash.com/random"
+              }
+              width="140px"
+              height="140px"
+              style={{
+                objectFit: "cover",
+                borderRadius: "50%",
+                marginBottom: "10px",
+              }}
+            />
+            <input
+              type="file"
+              id="profile-image"
+              hidden
+              onChange={(event: any) => {
+                event.target.files !== null && setImage(event.target.files[0])
+              }}
+            />
+            <span onClick={connectSpanToInput} style={{ cursor: "pointer" }}>
+              <AddAPhotoIcon />
+            </span>
+            <TextField
+              type="text"
+              name="user_id"
+              label="ユーザーID"
+              variant="standard"
+              defaultValue={myprofile.user_id}
+              sx={{ marginBottom: "10px", width: "70%" }}
+              onChange={(event: any) => setUserId(event.target.value)}
+            />
+            <TextField
+              type="text"
+              name="username"
+              label="ユーザー名"
+              variant="standard"
+              defaultValue={myprofile.username}
+              sx={{ marginBottom: "10px", width: "70%" }}
+              onChange={(event: any) => setUsername(event.target.value)}
+            />
+            <TextField
+              type="number"
+              name="age"
+              label="年齢"
+              variant="standard"
+              defaultValue={myprofile.age}
+              sx={{ marginBottom: "20px", width: "70%" }}
+              onChange={(event: any) => setAge(event.target.value)}
+            />
+            <Button onClick={onClickUpload} variant="contained">
+              更新する
+            </Button>
+          </Box>
+        </Box>
       </Box>
     </Modal>
   );

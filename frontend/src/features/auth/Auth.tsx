@@ -24,6 +24,7 @@ import {
   selectIsLogin,
   endLogin,
   asyncGetAllProfiles,
+  selectMyprofile,
 } from "./authSlice";
 import {
   asyncGetAllComments,

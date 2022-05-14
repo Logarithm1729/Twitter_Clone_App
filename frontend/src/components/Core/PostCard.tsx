@@ -19,7 +19,7 @@ import { Button, Stack, TextField } from "@mui/material";
 import { Box } from "@mui/system";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import ChatIcon from '@mui/icons-material/Chat';
+import ChatIcon from "@mui/icons-material/Chat";
 
 import {
   selectAllProfiles,
@@ -40,6 +40,7 @@ import {
   startIsPosting,
 } from "../../features/post/postSlice";
 import PostSettingButton from "./PostSettingButton";
+import { PROFILE } from "../../types/auth_types";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -79,7 +80,7 @@ export const PostCard = (props: PROPS_POST) => {
   const myprofile = useSelector(selectMyprofile);
   const likes = useSelector(selectLike);
 
-  const prof = allProfiles.filter((prof) => {
+  const prof = allProfiles.find((prof) => {
     return prof.userProfile === userPost;
   });
 
@@ -87,35 +88,47 @@ export const PostCard = (props: PROPS_POST) => {
     return comment.postComment === post_id;
   });
 
+  const getCommentedUser = (userComment: string) => {
+    return allProfiles.find((prof) => prof.userProfile === userComment);
+  };
+
   const likesRelatedMe = likes.filter(
     (like) => like.userLike === myprofile.userProfile
   );
 
-  const likesRelatedPost = likesRelatedMe.filter(
+  const likesRelatedPostandMe = likesRelatedMe.filter(
     (like) => like.postLike === post_id
   );
 
   const isLiked = () => {
-    if (likesRelatedPost.length === 0) {
+    if (likesRelatedPostandMe.length === 0) {
       return false;
-    } else if (likesRelatedPost.length > 0) {
+    } else if (likesRelatedPostandMe.length > 0) {
       return true;
     } else {
       return false;
-    }
+    }    
   };
 
+  const likesRelatedPost = likes.filter((like) => {
+    return like.postLike === post_id;
+  })
 
   return (
-    <Card sx={{ boxShadow: "none", borderRadius: "none", 'borderBottom': 'solid #0000002b 1px'}}>
+    <Card
+      sx={{
+        boxShadow: "none",
+        borderRadius: "none",
+        borderBottom: "solid #0000002b 1px",
+      }}
+    >
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            A
+          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe" src={prof?.prof_image}>
           </Avatar>
         }
         action={<PostSettingButton post_id={post_id} userPost={userPost} />}
-        title={title}
+        title={prof !== undefined && prof.username}
         subheader={created_at}
       />
       {post_image && (
@@ -128,6 +141,7 @@ export const PostCard = (props: PROPS_POST) => {
       )}
       <CardContent>
         <Typography variant="body2" color="text.secondary">
+          <h4>{title}</h4>
           {content}
         </Typography>
       </CardContent>
@@ -149,7 +163,7 @@ export const PostCard = (props: PROPS_POST) => {
               }
             } else {
               const res = await dispatch(
-                asyncDeleteLike(likesRelatedPost[0].id)
+                asyncDeleteLike(likesRelatedPostandMe[0].id)
               );
               if (asyncDeleteLike.fulfilled.match(res)) {
                 await dispatch(asyncGetLikes());
@@ -163,6 +177,7 @@ export const PostCard = (props: PROPS_POST) => {
           ) : (
             <FavoriteBorderIcon />
           )}
+          {likesRelatedPost.length}
         </IconButton>
         <IconButton aria-label="share">
           <ShareIcon />
@@ -177,8 +192,16 @@ export const PostCard = (props: PROPS_POST) => {
         </ExpandMore>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent sx={{'border': 'solid #0000002b 1px','borderRadius': '20px' , 'margin': '10px'}}>
-          <Typography paragraph sx={{'fontSize': '20px', 'fontWeight': '600'}}>コメント欄</Typography>
+        <CardContent
+          sx={{
+            border: "solid #0000002b 1px",
+            borderRadius: "20px",
+            margin: "10px",
+          }}
+        >
+          <Typography paragraph sx={{ fontSize: "20px", fontWeight: "600" }}>
+            コメント欄
+          </Typography>
           <Formik
             initialValues={{ comment: "", postComment: post_id }}
             onSubmit={async (values) => {
@@ -233,7 +256,10 @@ export const PostCard = (props: PROPS_POST) => {
                     padding: "5px 10px",
                   }}
                 >
-                  <Box>{com.comment}</Box>
+                  <Box display='flex'>
+                    <h5 style={{'marginRight': '10px'}}>{getCommentedUser(com.userComment)?.username}さん:</h5>
+                    <p>{com.comment}</p>
+                  </Box>
                   <Button
                     onClick={async () => {
                       await dispatch(asyncDeleteComment(com.id));

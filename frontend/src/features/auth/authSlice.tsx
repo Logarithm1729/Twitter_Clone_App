@@ -66,7 +66,7 @@ export const asyncGetMyProfile = createAsyncThunk(
         Authorization: `JWT ${localStorage.localJWT}`,
       },
     });
-    return res.data;
+    return res.data[0];
   }
 );
 
@@ -107,7 +107,7 @@ export const asyncUpdateMyProfile = createAsyncThunk(
     prof_info.username && uploadData.append("username", prof_info.username);
     prof_info.age && uploadData.append("age", String(prof_info.age));
     prof_info.prof_image &&
-      uploadData.append("prof_image", String(prof_info.prof_image));
+      uploadData.append("prof_image", prof_info.prof_image, prof_info.prof_image.name);
     const res = await axios.put(
       `${API_URL}/rest_api/compose/profile/${prof_info.id}/`,
       uploadData,

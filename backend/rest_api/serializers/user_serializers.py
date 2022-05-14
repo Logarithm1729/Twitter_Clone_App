@@ -27,6 +27,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         model = models.Profile
         fields = '__all__'
 
+
 class FollowSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Follow

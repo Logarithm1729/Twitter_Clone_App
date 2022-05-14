@@ -10,14 +10,14 @@ export interface PROPS_ID {
 export interface PROFILE {
   id: string;
   user_id: string;
-  username: string | undefined;
+  username: string;
   age: number | undefined;
-  prof_image: string | undefined | null;
+  prof_image: File | null;
   userProfile: string;
 }
 
 export interface REGISTER_PROFILE {
-  username: string | undefined;
+  username: string;
 }
 
 export interface PROFILE_ID {

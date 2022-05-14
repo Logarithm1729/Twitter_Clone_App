@@ -1,7 +1,8 @@
-from rest_framework import status, views, viewsets
+from rest_framework import status, views, viewsets, generics
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.contrib.auth import get_user_model
+
 
 from .. import serializers, models
 
@@ -56,8 +57,15 @@ class FollowViewSet(viewsets.ModelViewSet):
     queryset = models.Follow.objects.all()
     serializer_class = serializers.FollowSerializer
 
-class MyProfileAPIView(views.APIView):
-    def get(self, request, *args, **kwargs):
-        my_prof = models.Profile.objects.get(userProfile=request.user)
-        serializer = serializers.ProfileSerializer(my_prof)
-        return Response(serializer.data, status.HTTP_200_OK)
+# class MyProfileAPIView(views.APIView):
+#     def get(self, request, *args, **kwargs):
+#         my_prof = models.Profile.objects.get(userProfile=self.request.user)
+#         serializer = serializers.ProfileSerializer(instance=my_prof)
+#         return Response(serializer.data, status.HTTP_200_OK)
+
+"""Above code is not working, but bellow code is working ???????????"""
+class MyProfileAPIView(generics.ListAPIView):
+    queryset = models.Profile.objects.all()
+    serializer_class = serializers.ProfileSerializer
+    def get_queryset(self):
+        return self.queryset.filter(userProfile=self.request.user)
