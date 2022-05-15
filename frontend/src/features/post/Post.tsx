@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
@@ -24,6 +24,8 @@ import {
   startIsPosting,
   endIsPosting,
   asyncGetAllPosts,
+  asyncGetAllComments,
+  asyncGetLikes,
 } from "./postSlice";
 import { selectIsLogin } from "../auth/authSlice";
 
@@ -52,7 +54,32 @@ export const Post = () => {
   const dispatch: AppDispatch = useDispatch();
   const openNewPost = useSelector(selectOpenNewPost);
   const isPosting = useSelector(selectIsPosting);
-  const isLogin = useSelector(selectIsLogin);
+
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [postImg, setPostImg] = useState(null);
+
+  const editPostImage = () => {
+    const target = document.getElementById("modal-post-image");
+    target?.click();
+  };
+
+  const uploadPostData = async () => {
+    const data = {
+      title: title,
+      content: content,
+      post_image: postImg,
+    };
+    await dispatch(startIsPosting());
+    const res = await dispatch(asyncPostCreate(data));
+    if (asyncPostCreate.fulfilled.match(res)) {
+      await dispatch(asyncGetAllPosts());
+      await dispatch(asyncGetAllComments());
+      await dispatch(asyncGetLikes());
+      await dispatch(endOpenNewPost());
+      await dispatch(endIsPosting());
+    }
+  };
 
   return (
     <div>
@@ -62,99 +89,67 @@ export const Post = () => {
         aria-describedby="modal-modal-description"
       >
         <Box sx={customStyle}>
-          <Formik
-            initialValues={{ title: "", content: "", post_image: "" }}
-            onSubmit={async (values) => {
-              await dispatch(startIsPosting());
-              const res = await dispatch(asyncPostCreate(values));
-              if (asyncPostCreate.fulfilled.match(res)) {
-                await dispatch(startIsPosting());
-                await dispatch(asyncGetAllPosts());
-                await dispatch(endOpenNewPost());
-                await dispatch(endIsPosting());
-              }
-            }}
-          >
-            {({
-              values,
-              errors,
-              touched,
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              isValid,
-            }) => (
-              <div className={styles.post_div}>
-                <CloseIcon
-                  style={{ top: "0", left: "0" }}
-                  onClick={() => dispatch(endOpenNewPost())}
-                />
-                <h2 style={{ textAlign: "center", 'margin': '0' }}>新しいツイート</h2>
-                <form onSubmit={handleSubmit} className={styles.post_form}>
-                  <Stack
-                    sx={{
-                      width: "80%",
-                      height: "100%",
-                      margin: "0 auto 20px auto",
-                    }}
-                    alignItems="stretch"
-                    justifyContent="space-evenly"
-                  >
-                    <TextField
-                      value={values.title}
-                      type="text"
-                      name="title"
-                      onChange={handleChange}
-                      label="タイトル"
-                      onBlur={handleBlur}
-                      size="small"
-                      variant="standard"
-                    />
-                    <TextField
-                      value={values.content}
-                      type="text"
-                      name="content"
-                      onChange={handleChange}
-                      label="投稿内容"
-                      onBlur={handleBlur}
-                      multiline
-                      rows={4}
-                    />
-                    <label
-                      htmlFor="icon-button-file"
-                      style={{ textAlign: "center" }}
-                    >
-                      <input
-                        id="icon-button-file"
-                        type="file"
-                        style={{ display: "none" }}
-                        value={values.post_image}
-                        onChange={handleChange}
-                      />
-                      <IconButton
-                        color="primary"
-                        aria-label="upload picture"
-                        component="span"
-                      >
-                        <PhotoCamera />
-                      </IconButton>
-                    </label>
-                    <Button
-                      variant="contained"
-                      type="submit"
-                      endIcon={<TwitterIcon />}
-                    >
-                      {!isPosting ? (
-                        <p>ツイートする</p>
-                      ) : (
-                        <CircularProgress size="small" />
-                      )}
-                    </Button>
-                  </Stack>
-                </form>
-              </div>
-            )}
-          </Formik>
+          <div className={styles.post_div}>
+            <CloseIcon
+              style={{ top: "0", left: "0" }}
+              onClick={() => dispatch(endOpenNewPost())}
+            />
+            <h2 style={{ textAlign: "center", margin: "0" }}>新しいツイート</h2>
+            <Stack
+              sx={{
+                width: "80%",
+                height: "100%",
+                margin: "0 auto 20px auto",
+              }}
+              alignItems="stretch"
+              justifyContent="space-evenly"
+              maxHeight="350px"
+            >
+              <TextField
+                type="text"
+                name="title"
+                label="タイトル"
+                size="small"
+                variant="standard"
+                defaultValue=""
+                onChange={(event: any) => {
+                  setTitle(event.target.value);
+                }}
+              />
+              <TextField
+                type="text"
+                name="content"
+                label="投稿内容"
+                multiline
+                rows={4}
+                onChange={(event: any) => {
+                  setContent(event.target.value);
+                }}
+              />
+              <input
+                id="modal-post-image"
+                type="file"
+                style={{ display: "none" }}
+                onChange={(event: any) => {
+                  setPostImg(event.target.files[0]);
+                }}
+              />
+              <label style={{ textAlign: "center" }} onClick={editPostImage}>
+                <PhotoCamera />
+              </label>
+              <Button
+                variant="contained"
+                endIcon={<TwitterIcon />}
+                onClick={uploadPostData}
+              >
+                {!isPosting ? (
+                  <p>ツイートする</p>
+                ) : (
+                  <CircularProgress size="small" />
+                )}
+              </Button>
+            </Stack>
+          </div>
         </Box>
       </Modal>
     </div>

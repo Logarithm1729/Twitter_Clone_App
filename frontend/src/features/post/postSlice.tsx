@@ -18,8 +18,10 @@ export const asyncPostCreate = createAsyncThunk(
     const uploadData = new FormData();
     post_info.title && uploadData.append("title", post_info.title);
     post_info.content && uploadData.append("content", post_info.content);
-    post_info.post_image &&
-      uploadData.append("post_image", post_info.post_image);
+    post_info.post_image && uploadData.append('post_image', post_info.post_image)
+    // post_info.post_image?.map((img, index) => {
+    //   uploadData.append('post_image', img)
+    // })
     const res = await axios.post(
       `${api_url}/rest_api/compose/posts/`,
       uploadData,

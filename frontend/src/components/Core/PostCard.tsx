@@ -50,7 +50,7 @@ interface PROPS_POST {
   post_id: string;
   title: string | undefined;
   content: string | undefined;
-  post_image: string | File | undefined;
+  post_image: string | undefined | null;
   created_at: string;
   userPost: string;
 }
@@ -107,12 +107,12 @@ export const PostCard = (props: PROPS_POST) => {
       return true;
     } else {
       return false;
-    }    
+    }
   };
 
   const likesRelatedPost = likes.filter((like) => {
     return like.postLike === post_id;
-  })
+  });
 
   return (
     <Card
@@ -124,24 +124,25 @@ export const PostCard = (props: PROPS_POST) => {
     >
       <CardHeader
         avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe" src={prof?.prof_image}>
-          </Avatar>
+          <Avatar
+            sx={{ bgcolor: red[500] }}
+            aria-label="recipe"
+            src={prof?.prof_image}
+          ></Avatar>
         }
         action={<PostSettingButton post_id={post_id} userPost={userPost} />}
         title={prof !== undefined && prof.username}
         subheader={created_at}
       />
-      {post_image && (
-        <CardMedia
-          component="img"
-          height="194"
-          image="/static/images/cards/paella.jpg"
-          alt="Paella dish"
-        />
-      )}
       <CardContent>
+        <h4>{title}</h4>
+        {post_image && (
+          <img
+            src={post_image}
+            style={{ maxWidth: "500px", maxHeight: "500px" }}
+          />
+        )}
         <Typography variant="body2" color="text.secondary">
-          <h4>{title}</h4>
           {content}
         </Typography>
       </CardContent>
@@ -256,8 +257,10 @@ export const PostCard = (props: PROPS_POST) => {
                     padding: "5px 10px",
                   }}
                 >
-                  <Box display='flex'>
-                    <h5 style={{'marginRight': '10px'}}>{getCommentedUser(com.userComment)?.username}さん:</h5>
+                  <Box display="flex">
+                    <h5 style={{ marginRight: "10px" }}>
+                      {getCommentedUser(com.userComment)?.username}さん:
+                    </h5>
                     <p>{com.comment}</p>
                   </Box>
                   <Button

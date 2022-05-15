@@ -1,7 +1,8 @@
 export interface POST_CREATE {
   title: string;
   content: string;
-  post_image: string;
+  // post_image: Array<File> | null;
+  post_image: File | null;
 }
 
 export interface POST_GET_RESPONCE {
