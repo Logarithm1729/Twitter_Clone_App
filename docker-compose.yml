@@ -12,6 +12,7 @@ services:
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=Logarithm
+      # - POSTGRES_HOST_AUTH_METHOD=trust
     ports:
       - 5432:5432
   backend:
@@ -42,3 +43,10 @@ services:
     restart: always
     depends_on:
       - backend
+  # gitLab:
+  #   image: gitlab/gitlab-ce:rc
+  #   restart: always
+  #   hostname: 'gitlab'
+  #   environment:
+  #     GITLAB_OMNIBUS_CONFIG: |
+  #       external_url: 'https://gitlab.'
