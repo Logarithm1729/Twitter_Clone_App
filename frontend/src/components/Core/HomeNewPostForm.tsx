@@ -13,6 +13,7 @@ import {
   asyncPostCreate,
   endIsPosting,
   endOpenNewPost,
+  selectIsPosting,
   startIsPosting,
 } from "../../features/post/postSlice";
 
@@ -21,6 +22,9 @@ export const HomeNewPostForm = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [postImg, setPostImg] = useState(null);
+  const isPosting = useSelector(selectIsPosting);
+
+  console.log(content);
 
   const myprofile = useSelector(selectMyprofile);
 
@@ -38,6 +42,9 @@ export const HomeNewPostForm = () => {
     await dispatch(startIsPosting());
     const res = await dispatch(asyncPostCreate(data));
     if (asyncPostCreate.fulfilled.match(res)) {
+      await setTitle("");
+      await setContent("");
+      await setPostImg(null);
       await dispatch(asyncGetAllPosts());
       await dispatch(asyncGetAllComments());
       await dispatch(asyncGetLikes());
@@ -71,9 +78,9 @@ export const HomeNewPostForm = () => {
             variant="standard"
             multiline
             sx={{ width: "40%", marginBottom: "10px" }}
-            defaultValue=''
+            value={title}
             onChange={(event: any) => {
-              setTitle(event.target.value)
+              setTitle(event.target.value);
             }}
           />
           <TextField
@@ -84,9 +91,9 @@ export const HomeNewPostForm = () => {
             variant="standard"
             multiline
             sx={{ width: "100%", marginBottom: "10px" }}
-            defaultValue=''
-            onChange={(event: any) => {
-              setContent(event.target.value)
+            value={content}
+            onChange={async (event: any) => {
+              await setContent(event.target.value);
             }}
           />
         </Box>
@@ -103,8 +110,8 @@ export const HomeNewPostForm = () => {
               type="file"
               // multiple
               style={{ display: "none" }}
-              onChange={(event: any) => {
-                setPostImg(event.target.files[0])
+              onChange={async (event: any) => {
+                await setPostImg(event.target.files[0]);
               }}
             />
             <span onClick={editPostImage} style={{ cursor: "pointer" }}>

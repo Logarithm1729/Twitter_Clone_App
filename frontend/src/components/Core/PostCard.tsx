@@ -40,7 +40,7 @@ import {
   startIsPosting,
 } from "../../features/post/postSlice";
 import PostSettingButton from "./PostSettingButton";
-import { PROFILE } from "../../types/auth_types";
+import { defaultImage, PROFILE } from "../../types/auth_types";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -127,7 +127,7 @@ export const PostCard = (props: PROPS_POST) => {
           <Avatar
             sx={{ bgcolor: red[500] }}
             aria-label="recipe"
-            src={prof?.prof_image}
+            src={prof?.prof_image ? prof.prof_image : defaultImage}
           ></Avatar>
         }
         action={<PostSettingButton post_id={post_id} userPost={userPost} />}
@@ -135,15 +135,21 @@ export const PostCard = (props: PROPS_POST) => {
         subheader={created_at}
       />
       <CardContent>
-        <h4>{title}</h4>
+        <h6>タイトル</h6>
+        <h4 style={{'paddingBottom': '20px'}}>{title}</h4>
         {post_image && (
           <img
             src={post_image}
-            style={{ maxWidth: "500px", maxHeight: "500px" }}
+            style={{
+              maxWidth: "500px",
+              maxHeight: "500px",
+              borderRadius: "20px",
+              border: "solid 1px #c5c5c5",
+            }}
           />
         )}
         <Typography variant="body2" color="text.secondary">
-          {content}
+          <p style={{'fontSize': '18px', 'fontWeight': '500'}}>{content}</p>
         </Typography>
       </CardContent>
       <CardActions disableSpacing>

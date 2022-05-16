@@ -28,3 +28,5 @@ export interface FOLLOW {
   userFollowing: string;
   userFollower: string;
 }
+
+export const defaultImage = 'http://localhost:8000/media/default/user_image/sample.jpeg'

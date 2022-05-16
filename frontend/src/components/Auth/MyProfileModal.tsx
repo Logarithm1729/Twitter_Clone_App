@@ -20,7 +20,7 @@ import { Formik } from "formik";
 import { Button, IconButton, TextField } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
 import { UploadButton } from "./UploadButton";
-import { PROFILE } from "../../types/auth_types";
+import { defaultImage, PROFILE } from "../../types/auth_types";
 
 const customStyle = {
   position: "absolute" as "absolute",
@@ -101,7 +101,7 @@ export const MyProfileModal = () => {
               src={
                 myprofile.prof_image
                   ? myprofile.prof_image
-                  : "https://source.unsplash.com/random"
+                  : defaultImage
               }
               width="140px"
               height="140px"
