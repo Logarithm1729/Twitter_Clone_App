@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "@mui/material/Modal";
 import { Box, Button, CircularProgress, TextField } from "@mui/material";
@@ -21,16 +21,12 @@ import {
   selectOpenSignUp,
   asyncUserRegister,
   startLogin,
-  selectIsLogin,
-  endLogin,
   asyncGetAllProfiles,
-  selectMyprofile,
 } from "./authSlice";
 import {
   asyncGetAllComments,
   asyncGetAllPosts,
   asyncGetLikes,
-  selectOpenNewPost,
 } from "../post/postSlice";
 
 const customStyle = {
@@ -68,8 +64,7 @@ export const Auth: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const openSignIn = useSelector(selectOpenSignIn);
   const openSignUp = useSelector(selectOpenSignUp);
-  const isLoading = useSelector(selectIsLoading);
-  const isLogin = useSelector(selectIsLogin);
+  const isLoading = useSelector(selectIsLoading); 
 
   return (
     <div>

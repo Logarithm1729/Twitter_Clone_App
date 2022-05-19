@@ -1,16 +1,23 @@
-import { Avatar, Menu, MenuItem, Stack } from "@mui/material";
+import { Avatar, Menu, MenuItem, Stack, useMediaQuery } from "@mui/material";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import SearchIcon from "@mui/icons-material/Search";
-import { Box } from "@mui/system";
+import { Box, color } from "@mui/system";
 import PersonIcon from "@mui/icons-material/Person";
 import { AppDispatch } from "../../app/store";
 import { useDispatch, useSelector } from "react-redux";
-import { endLogin, selectMyprofile, startProfile } from "../../features/auth/authSlice";
+import { selectMyprofile, startProfile } from "../../features/auth/authSlice";
 import React from "react";
 import { defaultImage } from "../../types/auth_types";
+import { Link } from "react-router-dom";
 
-const barWidth = { xs: "15%", sm: "15%", md: "10%" };
+const barWidth = { xs: "15%", sm: "15%", md: "20%", lg: "25%" };
+
+const pStyle = {
+  fontWeight: "600",
+  color: "#353535",
+  padding: "0 10px",
+};
 
 export const LeftAppbar = (props: any) => {
   const { AddIconFunc, PersonIconFunc } = props;
@@ -19,9 +26,11 @@ export const LeftAppbar = (props: any) => {
   const myprofile = useSelector(selectMyprofile);
 
   const onClickLogout = () => {
-    localStorage.clear()
-    window.location.reload()
+    localStorage.clear();
+    window.location.reload();
   };
+
+  const isLgUp: boolean = useMediaQuery("(min-width:1200px)");
 
   // Avatar
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -41,23 +50,51 @@ export const LeftAppbar = (props: any) => {
           height="100%"
           // alignItems="center"
         >
-          <TwitterIcon
-            sx={{ fontSize: "35px", marginBottom: "10px" }}
-            color="primary"
-          />
-          <AddCircleIcon
-            sx={{ fontSize: "35px", cursor: "pointer" }}
-            color="primary"
+          <Link to="/" style={{ textDecoration: "none" }}>
+            <Box
+              display="flex"
+              sx={{
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            >
+              <TwitterIcon sx={{ fontSize: "35px" }} color="primary" />
+              {isLgUp && <p style={pStyle}>ホーム</p>}
+            </Box>
+          </Link>
+          <Box
+            display="flex"
+            sx={{ alignItems: "center", cursor: "pointer" }}
             onClick={AddIconFunc}
-          />
-          <SearchIcon sx={{ fontSize: "35px" }} color="primary" />
-          <PersonIcon
-            sx={{ fontSize: "35px", cursor: "pointer" }}
-            color="primary"
+          >
+            <AddCircleIcon
+              sx={{ fontSize: "35px", cursor: "pointer" }}
+              color="primary"
+            />
+            {isLgUp && <p style={pStyle}>新しいツイート</p>}
+          </Box>
+          <Link to="/search/" style={{ textDecoration: "none" }}>
+            <Box
+              display="flex"
+              sx={{ alignItems: "center", cursor: "pointer" }}
+            >
+              <SearchIcon sx={{ fontSize: "35px" }} color="primary" />
+              {isLgUp && <p style={pStyle}>検索</p>}
+            </Box>
+          </Link>
+          <Box
+            display="flex"
+            sx={{ alignItems: "center", cursor: "pointer" }}
             onClick={PersonIconFunc}
-          />
+          >
+            <PersonIcon
+              sx={{ fontSize: "35px", cursor: "pointer" }}
+              color="primary"
+            />
+            {isLgUp && <p style={pStyle}>プロフィール</p>}
+          </Box>
         </Stack>
-        <Box>
+        <Box sx={{ cursor: "pointer" }}>
           <Avatar
             src={myprofile.prof_image ? myprofile.prof_image : defaultImage}
             sx={{ border: "solid 1px #c5c5c5" }}
@@ -91,7 +128,7 @@ export const LeftAppbar = (props: any) => {
             </MenuItem>
             <MenuItem
               onClick={async () => {
-                await onClickLogout()
+                await onClickLogout();
                 // await handleClose();
               }}
             >

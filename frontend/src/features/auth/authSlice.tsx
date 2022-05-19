@@ -7,7 +7,6 @@ import {
   PROFILE,
   PROFILE_ID,
   PROPS_AUTHEN,
-  PROPS_ID,
 } from "../../types/auth_types";
 
 // const API_URL = process.env.DJANGO_TO_REACT_API_URL;

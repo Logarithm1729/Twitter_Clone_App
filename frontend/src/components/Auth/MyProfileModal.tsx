@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Modal from "@mui/material/Modal";
 import { Box } from "@mui/system";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,11 +16,8 @@ import {
   startLoading,
 } from "../../features/auth/authSlice";
 import { AppDispatch } from "../../app/store";
-import { Formik } from "formik";
-import { Button, IconButton, TextField } from "@mui/material";
-import { PhotoCamera } from "@mui/icons-material";
-import { UploadButton } from "./UploadButton";
-import { defaultImage, PROFILE } from "../../types/auth_types";
+import { Button, TextField } from "@mui/material";
+import { defaultImage } from "../../types/auth_types";
 
 const customStyle = {
   position: "absolute" as "absolute",
@@ -98,11 +95,8 @@ export const MyProfileModal = () => {
           >
             <h2 style={{ marginBottom: "10px" }}>プロフィール</h2>
             <img
-              src={
-                myprofile.prof_image
-                  ? myprofile.prof_image
-                  : defaultImage
-              }
+              src={myprofile.prof_image ? myprofile.prof_image : defaultImage}
+              alt='auth'
               width="140px"
               height="140px"
               style={{
@@ -116,7 +110,7 @@ export const MyProfileModal = () => {
               id="profile-image"
               hidden
               onChange={(event: any) => {
-                event.target.files !== null && setImage(event.target.files[0])
+                event.target.files !== null && setImage(event.target.files[0]);
               }}
             />
             <span onClick={connectSpanToInput} style={{ cursor: "pointer" }}>

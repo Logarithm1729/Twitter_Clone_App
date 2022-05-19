@@ -1,19 +1,15 @@
 import { PhotoCamera } from "@mui/icons-material";
-import { Button, IconButton, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import { Box } from "@mui/system";
-import { Formik } from "formik";
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../app/store";
-import { selectMyprofile } from "../../features/auth/authSlice";
 import {
   asyncGetAllComments,
   asyncGetAllPosts,
   asyncGetLikes,
   asyncPostCreate,
   endIsPosting,
-  endOpenNewPost,
-  selectIsPosting,
   startIsPosting,
 } from "../../features/post/postSlice";
 
@@ -22,11 +18,6 @@ export const HomeNewPostForm = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [postImg, setPostImg] = useState(null);
-  const isPosting = useSelector(selectIsPosting);
-
-  console.log(content);
-
-  const myprofile = useSelector(selectMyprofile);
 
   const editPostImage = () => {
     const target = document.getElementById("home-post-image");

@@ -1,0 +1,13 @@
+.search_container {
+  height: 100%;
+  width: 100%;
+  min-height: 100vh;
+  background-color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+}
+/*# sourceMappingURL=Search.module.css.map */

@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
   CircularProgress,
-  IconButton,
   Modal,
   Stack,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import { Formik } from "formik";
 import { TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import TwitterIcon from "@mui/icons-material/Twitter";
@@ -27,7 +25,6 @@ import {
   asyncGetAllComments,
   asyncGetLikes,
 } from "./postSlice";
-import { selectIsLogin } from "../auth/authSlice";
 
 const customStyle = {
   position: "absolute" as "absolute",
