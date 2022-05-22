@@ -18,6 +18,7 @@ import {
 import { AppDispatch } from "../../app/store";
 import { Button, TextField } from "@mui/material";
 import { defaultImage } from "../../types/auth_types";
+import { Link } from "react-router-dom";
 
 const customStyle = {
   position: "absolute" as "absolute",
@@ -96,7 +97,7 @@ export const MyProfileModal = () => {
             <h2 style={{ marginBottom: "10px" }}>プロフィール</h2>
             <img
               src={myprofile.prof_image ? myprofile.prof_image : defaultImage}
-              alt='auth'
+              alt="auth"
               width="140px"
               height="140px"
               style={{
@@ -144,7 +145,12 @@ export const MyProfileModal = () => {
               onChange={(event: any) => setAge(event.target.value)}
             />
             <Button onClick={onClickUpload} variant="contained">
-              更新する
+              <Link
+                to={`/${userId}`}
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                更新する
+              </Link>
             </Button>
           </Box>
         </Box>

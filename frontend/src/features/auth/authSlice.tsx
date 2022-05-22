@@ -3,10 +3,10 @@ import { RootState } from "../../app/store";
 import axios from "axios";
 
 import {
-  FOLLOW,
   PROFILE,
   PROFILE_ID,
   PROPS_AUTHEN,
+  PROPS_FOLLOW_POST,
 } from "../../types/auth_types";
 
 // const API_URL = process.env.DJANGO_TO_REACT_API_URL;
@@ -106,7 +106,11 @@ export const asyncUpdateMyProfile = createAsyncThunk(
     prof_info.username && uploadData.append("username", prof_info.username);
     prof_info.age && uploadData.append("age", String(prof_info.age));
     prof_info.prof_image &&
-      uploadData.append("prof_image", prof_info.prof_image, prof_info.prof_image.name);
+      uploadData.append(
+        "prof_image",
+        prof_info.prof_image,
+        prof_info.prof_image.name
+      );
     const res = await axios.put(
       `${API_URL}/rest_api/compose/profile/${prof_info.id}/`,
       uploadData,
@@ -120,15 +124,38 @@ export const asyncUpdateMyProfile = createAsyncThunk(
     return res.data;
   }
 );
-export const asyncFollowing = createAsyncThunk(
-  "following",
-  async (userFollowing) => {
-    const res = await axios.post(
-      `${API_URL}/rest_api/compose/follow/`,
-      userFollowing,
+
+// follow field
+export const asyncPostFollowing = createAsyncThunk(
+  "follow/post",
+  async (info: PROPS_FOLLOW_POST) => {
+    const res = await axios.post(`${API_URL}/rest_api/compose/follow/`, info, {
+      headers: {
+        Authorization: `JWT ${localStorage.localJWT}`,
+      },
+    });
+    return res.data;
+  }
+);
+
+export const asyncGetFollows = createAsyncThunk("follow/get", async () => {
+  const res = await axios.get(`${API_URL}/rest_api/compose/follow/`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `JWT ${localStorage.localJWT}`,
+    },
+  });
+  return res.data;
+});
+
+export const asyncDeleteFollowing = createAsyncThunk(
+  "follow/delete",
+  async (id: number) => {
+    const res = await axios.delete(
+      `${API_URL}/rest_api/compose/follow/${id}/`,
       {
         headers: {
-          "Content-Type": "appication/json",
+          "Content-Type": "application/json",
           Authorization: `JWT ${localStorage.localJWT}`,
         },
       }
@@ -164,10 +191,13 @@ export const authSlice = createSlice({
         userProfile: "",
       },
     ],
-    follow: {
-      userFollowing: "",
-      userFollower: "",
-    },
+    follows: [
+      {
+        id: 0,
+        userFollowing: "",
+        userFollower: "",
+      },
+    ],
   },
   reducers: {
     startSignIn(state) {
@@ -209,9 +239,6 @@ export const authSlice = createSlice({
     editMyProfile(state, action) {
       state.myProfile = action.payload;
     },
-    editFollow(state, action: PayloadAction<FOLLOW>) {
-      state.follow = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(asyncTakeToken.fulfilled, (state, aciton) => {
@@ -222,6 +249,12 @@ export const authSlice = createSlice({
     });
     builder.addCase(asyncGetAllProfiles.fulfilled, (state, action) => {
       state.allProfiles = action.payload;
+    });
+    builder.addCase(asyncPostFollowing.fulfilled, (state, action) => {
+      state.follows = [...state.follows, action.payload];
+    });
+    builder.addCase(asyncGetFollows.fulfilled, (state, action) => {
+      state.follows = action.payload;
     });
   },
 });
@@ -240,7 +273,6 @@ export const {
   endLoading,
   endLogin,
   editMyProfile,
-  editFollow,
 } = authSlice.actions;
 
 export const selectIsLoading = (state: RootState) => state.auth.isLoading;
@@ -251,5 +283,6 @@ export const selectOpenSettings = (state: RootState) => state.auth.openSettings;
 export const selectOpenProfile = (state: RootState) => state.auth.openProfile;
 export const selectMyprofile = (state: RootState) => state.auth.myProfile;
 export const selectAllProfiles = (state: RootState) => state.auth.allProfiles;
+export const selectAllFollow = (state: RootState) => state.auth.follows;
 
 export default authSlice.reducer;

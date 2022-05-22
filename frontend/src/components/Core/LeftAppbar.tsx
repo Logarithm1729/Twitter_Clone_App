@@ -1,17 +1,21 @@
+import React from "react";
 import { Avatar, Menu, MenuItem, Stack, useMediaQuery } from "@mui/material";
+import { Box } from "@mui/system";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import SearchIcon from "@mui/icons-material/Search";
-import { Box, color } from "@mui/system";
+import LogoutIcon from "@mui/icons-material/Logout";
 import PersonIcon from "@mui/icons-material/Person";
+
 import { AppDispatch } from "../../app/store";
-import { useDispatch, useSelector } from "react-redux";
-import { selectMyprofile, startProfile } from "../../features/auth/authSlice";
-import React from "react";
+import { selectMyprofile } from "../../features/auth/authSlice";
 import { defaultImage } from "../../types/auth_types";
-import { Link } from "react-router-dom";
+import { startOpenNewPost } from "../../features/post/postSlice";
 
 const barWidth = { xs: "15%", sm: "15%", md: "20%", lg: "25%" };
+export const rightElementWidth = { xs: "85%", sm: "85%", md: "80%", lg: "75%" };
 
 const pStyle = {
   fontWeight: "600",
@@ -19,11 +23,12 @@ const pStyle = {
   padding: "0 10px",
 };
 
-export const LeftAppbar = (props: any) => {
-  const { AddIconFunc, PersonIconFunc } = props;
+export const LeftAppbar = () => {
   const dispatch: AppDispatch = useDispatch();
 
   const myprofile = useSelector(selectMyprofile);
+
+  const AddIconFunc = () => dispatch(startOpenNewPost());
 
   const onClickLogout = () => {
     localStorage.clear();
@@ -43,7 +48,7 @@ export const LeftAppbar = (props: any) => {
   };
 
   return (
-    <Box width={barWidth} paddingY={3} paddingX={2} borderRight={1}>
+    <Box width={barWidth} paddingY={3} borderRight={1}>
       <Stack alignItems="center" height="90%" position="fixed" width={barWidth}>
         <Stack
           spacing={{ xs: 5, md: 7 }}
@@ -82,17 +87,18 @@ export const LeftAppbar = (props: any) => {
               {isLgUp && <p style={pStyle}>検索</p>}
             </Box>
           </Link>
-          <Box
-            display="flex"
-            sx={{ alignItems: "center", cursor: "pointer" }}
-            onClick={PersonIconFunc}
-          >
-            <PersonIcon
-              sx={{ fontSize: "35px", cursor: "pointer" }}
-              color="primary"
-            />
-            {isLgUp && <p style={pStyle}>プロフィール</p>}
-          </Box>
+          <Link to={`/${myprofile.user_id}`} style={{ textDecoration: "none" }}>
+            <Box
+              display="flex"
+              sx={{ alignItems: "center", cursor: "pointer" }}
+            >
+              <PersonIcon
+                sx={{ fontSize: "35px", cursor: "pointer" }}
+                color="primary"
+              />
+              {isLgUp && <p style={pStyle}>プロフィール</p>}
+            </Box>
+          </Link>
         </Stack>
         <Box sx={{ cursor: "pointer" }}>
           <Avatar
@@ -118,21 +124,48 @@ export const LeftAppbar = (props: any) => {
               horizontal: "left",
             }}
           >
-            <MenuItem
-              onClick={async () => {
-                await dispatch(startProfile());
-                await handleClose();
-              }}
-            >
-              Profile
+            <MenuItem disabled>
+              <Box
+                display="flex"
+                sx={{
+                  alignItems: "flex-end",
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    marginBottom: "2px",
+                    marginRight: '3px'
+                  }}
+                >
+                  login...
+                </p>
+                <p>{myprofile.username}</p>
+              </Box>
+            </MenuItem>
+            <MenuItem>
+              <Link
+                to={`/${myprofile.user_id}`}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <Box display="flex" sx={{ alignItems: "center" }}>
+                  <PersonIcon />
+                  <p>アカウント</p>
+                </Box>
+              </Link>
             </MenuItem>
             <MenuItem
               onClick={async () => {
                 await onClickLogout();
-                // await handleClose();
               }}
             >
-              Logout
+              <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+                <Box display="flex">
+                  <LogoutIcon />
+                  <p>ログアウト</p>
+                </Box>
+              </Link>
             </MenuItem>
           </Menu>
         </Box>

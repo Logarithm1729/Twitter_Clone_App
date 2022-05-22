@@ -41,6 +41,7 @@ import {
 } from "../../features/post/postSlice";
 import PostSettingButton from "./PostSettingButton";
 import { defaultImage } from "../../types/auth_types";
+import { Link } from "react-router-dom";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -123,23 +124,35 @@ export const PostCard = (props: PROPS_POST) => {
             borderBottom: "solid #0000002b 1px",
           }}
         >
-          <CardHeader
-            avatar={
-              <Avatar
-                sx={{ bgcolor: red[500] }}
-                aria-label="recipe"
-                src={prof?.prof_image ? prof.prof_image : defaultImage}
-              ></Avatar>
-            }
-            action={
-              <PostSettingButton
-                post_id={post_id}
-                userPost={relatedPost.userPost}
+          <Box
+            display="flex"
+            sx={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Link
+              to={`/${prof?.user_id}`}
+              style={{ textDecoration: "none", color: "black" }}
+            >
+              <CardHeader
+                avatar={
+                  <Avatar
+                    sx={{ bgcolor: red[500] }}
+                    aria-label="recipe"
+                    src={prof?.prof_image ? prof.prof_image : defaultImage}
+                  ></Avatar>
+                }
+                title={prof !== undefined && prof.username}
+                subheader={relatedPost.created_at}
               />
-            }
-            title={prof !== undefined && prof.username}
-            subheader={relatedPost.created_at}
-          />
+            </Link>
+            <PostSettingButton
+              post_id={post_id}
+              userPost={relatedPost.userPost}
+            />
+          </Box>
           <CardContent>
             <h6>タイトル</h6>
             <h4 style={{ paddingBottom: "20px" }}>{relatedPost.title}</h4>
@@ -155,8 +168,13 @@ export const PostCard = (props: PROPS_POST) => {
                 }}
               />
             )}
-            <Typography variant="body2" color="text.secondary">
-              <p style={{ fontSize: "18px", fontWeight: "500" }}>{relatedPost.content}</p>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              fontSize="18px"
+              fontWeight="500"
+            >
+              {relatedPost.content}
             </Typography>
           </CardContent>
           <CardActions disableSpacing>

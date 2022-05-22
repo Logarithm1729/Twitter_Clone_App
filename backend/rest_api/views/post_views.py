@@ -21,3 +21,4 @@ class CommentViewSet(viewsets.ModelViewSet):
 class LikeViewSet(viewsets.ModelViewSet):
     queryset = models.Like.objects.all()
     serializer_class = serializers.LikeSerializer
+    ordering_fields=['id']

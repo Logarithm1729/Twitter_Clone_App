@@ -1,5 +1,6 @@
 import { Box } from "@mui/system";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { selectAllProfiles } from "../../features/auth/authSlice";
 import { defaultImage } from "../../types/auth_types";
 import { PROPS_PROF_CARD } from "../../types/search_types";
@@ -14,65 +15,72 @@ export const ProfResultCard = (props: PROPS_PROF_CARD) => {
   return (
     <>
       {prof_id === "" ? null : (
-        <Box
-          width="200px"
-          height="250px"
-          mx={2}
-          my={3}
-          py={2}
-          sx={{ border: "solid 1px black", borderRadius: "20px" }}
+        <Link
+          to={`/${relatedProf?.user_id}`}
+          style={{ textDecoration: "none", color: "black" }}
         >
           <Box
-            display="flex"
-            height="100%"
-            width="100%"
-            sx={{
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "space-evenly",
-            }}
+            width="200px"
+            height="250px"
+            mx={2}
+            my={3}
+            py={2}
+            sx={{ border: "solid 1px black", borderRadius: "20px" }}
           >
-            <img
-              src={
-                relatedProf?.prof_image ? relatedProf.prof_image : defaultImage
-              }
-              alt="search prof"
-              width="80px"
-              height="80px"
-              style={{
-                borderRadius: "50%",
-                border: "solid 1px #c5c5c5",
-                objectFit: "cover",
+            <Box
+              display="flex"
+              height="100%"
+              width="100%"
+              sx={{
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "space-evenly",
               }}
-            />
-            <Box>
-              <Box
-                display="flex"
-                mb={1}
-                sx={{ flexDirection: "column", justifyContent: "flex-start" }}
-              >
-                <p>ユーザー名</p>
-                <h4>{relatedProf?.username}</h4>
-              </Box>
-              <Box
-                display="flex"
-                mb={1}
-                sx={{ flexDirection: "column", justifyContent: "flex-start" }}
-              >
-                <p>ユーザーID</p>
-                <h4>@{relatedProf?.user_id}</h4>
-              </Box>
-              <Box
-                display="flex"
-                mb={1}
-                sx={{ flexDirection: "column", justifyContent: "flex-start" }}
-              >
-                <p>年齢</p>
-                <h4>{relatedProf?.age} 歳</h4>
+            >
+              <img
+                src={
+                  relatedProf?.prof_image
+                    ? relatedProf.prof_image
+                    : defaultImage
+                }
+                alt="search prof"
+                width="80px"
+                height="80px"
+                style={{
+                  borderRadius: "50%",
+                  border: "solid 1px #c5c5c5",
+                  objectFit: "cover",
+                }}
+              />
+              <Box>
+                <Box
+                  display="flex"
+                  mb={1}
+                  sx={{ flexDirection: "column", justifyContent: "flex-start" }}
+                >
+                  <p>ユーザー名</p>
+                  <h4>{relatedProf?.username}</h4>
+                </Box>
+                <Box
+                  display="flex"
+                  mb={1}
+                  sx={{ flexDirection: "column", justifyContent: "flex-start" }}
+                >
+                  <p>ユーザーID</p>
+                  <h4>@{relatedProf?.user_id}</h4>
+                </Box>
+                <Box
+                  display="flex"
+                  mb={1}
+                  sx={{ flexDirection: "column", justifyContent: "flex-start" }}
+                >
+                  <p>年齢</p>
+                  <h4>{relatedProf?.age} 歳</h4>
+                </Box>
               </Box>
             </Box>
           </Box>
-        </Box>
+        </Link>
       )}
     </>
   );

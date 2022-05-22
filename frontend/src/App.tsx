@@ -3,15 +3,13 @@ import { useDispatch } from "react-redux";
 
 import styles from "./App.module.css";
 import { AppDispatch } from "./app/store";
-import { MyProfileModal } from "./components/Auth/MyProfileModal";
-import { Auth } from "./features/auth/Auth";
 import {
   asyncGetAllProfiles,
+  asyncGetFollows,
   asyncGetMyProfile,
   endSignIn,
   startSignIn,
 } from "./features/auth/authSlice";
-import { Post } from "./features/post/Post";
 import {
   asyncGetAllComments,
   asyncGetAllPosts,
@@ -35,16 +33,14 @@ function App() {
         await dispatch(asyncGetAllPosts());
         await dispatch(asyncGetAllComments());
         await dispatch(asyncGetLikes());
+        await dispatch(asyncGetFollows());
       }
     };
     fetchBootLoader();
-  }, [dispatch]);
+  }, [dispatch, window]);
 
   return (
     <div className={styles.app}>
-      <Auth />
-      <Post />
-      <MyProfileModal />
       <RouterConfig />
     </div>
   );

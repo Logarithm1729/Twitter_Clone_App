@@ -8,6 +8,7 @@ export const coreSlice = createSlice({
     searchResultPosts: [""],
     searchResultShow: "account",
     searchText: "",
+    settingToggleMypost: "tweet",
   },
   reducers: {
     setSearchResultProfiles(state, action) {
@@ -31,6 +32,15 @@ export const coreSlice = createSlice({
     editSearchText(state, action) {
       state.searchText = action.payload;
     },
+    tweetToggleMyPost(state) {
+      state.settingToggleMypost = "tweet";
+    },
+    mediaToggleMyPost(state) {
+      state.settingToggleMypost = "media";
+    },
+    likeToggleMyPost(state) {
+      state.settingToggleMypost = "like";
+    },
   },
   extraReducers: {},
 });
@@ -43,6 +53,9 @@ export const {
   accountSearchResultShow,
   tweetSearchResultShow,
   editSearchText,
+  tweetToggleMyPost,
+  mediaToggleMyPost,
+  likeToggleMyPost,
 } = coreSlice.actions;
 
 export const selectSearchResultProfiles = (state: RootState) =>
@@ -52,5 +65,7 @@ export const selectSearchResultPosts = (state: RootState) =>
 export const selectSearchResultShow = (state: RootState) =>
   state.core.searchResultShow;
 export const selectSearchText = (state: RootState) => state.core.searchText;
+export const selectSettingToggleMyPost = (state: RootState) =>
+  state.core.settingToggleMypost;
 
 export default coreSlice.reducer;

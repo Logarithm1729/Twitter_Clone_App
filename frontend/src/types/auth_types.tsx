@@ -24,9 +24,9 @@ export interface PROFILE_ID {
   id: string;
 }
 
-export interface FOLLOW {
+export interface PROPS_FOLLOW_POST {
   userFollowing: string;
-  userFollower: string;
+  userFollower: string | undefined;
 }
 
 export const defaultImage = 'http://localhost:8000/media/default/user_image/sample.jpeg'

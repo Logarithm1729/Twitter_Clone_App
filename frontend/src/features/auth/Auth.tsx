@@ -22,6 +22,7 @@ import {
   asyncUserRegister,
   startLogin,
   asyncGetAllProfiles,
+  asyncGetFollows,
 } from "./authSlice";
 import {
   asyncGetAllComments,
@@ -64,7 +65,7 @@ export const Auth: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const openSignIn = useSelector(selectOpenSignIn);
   const openSignUp = useSelector(selectOpenSignUp);
-  const isLoading = useSelector(selectIsLoading); 
+  const isLoading = useSelector(selectIsLoading);
 
   return (
     <div>
@@ -92,6 +93,7 @@ export const Auth: React.FC = () => {
                   await dispatch(asyncGetAllPosts());
                   await dispatch(asyncGetAllComments());
                   await dispatch(asyncGetLikes());
+                  await dispatch(asyncGetFollows());
                   await dispatch(endSignIn());
                   await dispatch(startLogin());
                   await dispatch(endLoading());
@@ -202,6 +204,7 @@ export const Auth: React.FC = () => {
                   await dispatch(asyncGetAllPosts());
                   await dispatch(asyncGetAllComments());
                   await dispatch(asyncGetLikes());
+                  await dispatch(asyncGetFollows());
                   await dispatch(endSignUp());
                   await dispatch(startLogin());
                   await dispatch(endLoading());

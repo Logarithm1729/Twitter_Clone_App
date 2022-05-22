@@ -18,7 +18,8 @@ export const asyncPostCreate = createAsyncThunk(
     const uploadData = new FormData();
     post_info.title && uploadData.append("title", post_info.title);
     post_info.content && uploadData.append("content", post_info.content);
-    post_info.post_image && uploadData.append('post_image', post_info.post_image)
+    post_info.post_image &&
+      uploadData.append("post_image", post_info.post_image);
     // post_info.post_image?.map((img, index) => {
     //   uploadData.append('post_image', img)
     // })
@@ -177,6 +178,13 @@ export const postSlice = createSlice({
         id: 0,
         userLike: "",
         postLike: "",
+      },
+    ],
+    follows: [
+      {
+        id: 0,
+        userFollowing: "",
+        userFollowr: "",
       },
     ],
   },
