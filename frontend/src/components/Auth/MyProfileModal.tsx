@@ -1,13 +1,12 @@
 import { useState } from "react";
 import Modal from "@mui/material/Modal";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { Box } from "@mui/system";
 import { useDispatch, useSelector } from "react-redux";
 import CloseIcon from "@mui/icons-material/Close";
 import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 
 import {
-  asyncGetAllProfiles,
-  asyncGetMyProfile,
   asyncUpdateMyProfile,
   endLoading,
   endProfile,
@@ -18,7 +17,6 @@ import {
 import { AppDispatch } from "../../app/store";
 import { Button, TextField } from "@mui/material";
 import { defaultImage } from "../../types/auth_types";
-import { Link } from "react-router-dom";
 
 const customStyle = {
   position: "absolute" as "absolute",
@@ -26,7 +24,7 @@ const customStyle = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 300,
-  height: 460,
+  height: 500,
   bgcolor: "white",
   boxShadow: 24,
   pt: 2,
@@ -46,10 +44,11 @@ export const MyProfileModal = () => {
   const myprofile = useSelector(selectMyprofile);
   const dispatch: AppDispatch = useDispatch();
 
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState<null | File>(null);
   const [userId, setUserId] = useState(myprofile.user_id);
   const [username, setUsername] = useState(myprofile.username);
   const [age, setAge] = useState(myprofile.age);
+  console.log(image);
 
   const connectSpanToInput = () => {
     const target = document.getElementById("profile-image");
@@ -68,10 +67,15 @@ export const MyProfileModal = () => {
     };
     const res = await dispatch(asyncUpdateMyProfile(profData));
     if (asyncUpdateMyProfile.fulfilled.match(res)) {
-      await dispatch(asyncGetAllProfiles());
-      await dispatch(asyncGetMyProfile());
-      await dispatch(endProfile());
-      await dispatch(endLoading());
+      window.location.pathname = `/${userId}`;
+      if (window.location.pathname === `/${userId}`) {
+        await setAge(0);
+        await setImage(null);
+        await setUserId("");
+        await setUsername("");
+        await dispatch(endProfile());
+        await dispatch(endLoading());
+      }
     }
   };
 
@@ -111,12 +115,34 @@ export const MyProfileModal = () => {
               id="profile-image"
               hidden
               onChange={(event: any) => {
-                event.target.files !== null && setImage(event.target.files[0]);
+                if (event.target.files.length > 0) {
+                  setImage(event.target.files[0]);
+                } else {
+                  setImage(null);
+                }
               }}
             />
-            <span onClick={connectSpanToInput} style={{ cursor: "pointer" }}>
-              <AddAPhotoIcon />
-            </span>
+            {image === null ? (
+              <span onClick={connectSpanToInput} style={{ cursor: "pointer" }}>
+                <AddAPhotoIcon />
+              </span>
+            ) : (
+              <Box
+                display="flex"
+                sx={{
+                  cursor: "pointer",
+                  justifyContent: "center",
+
+                  alignItems: "center",
+                }}
+                onClick={() => setImage(null)}
+              >
+                <p style={{ color: "red" }}>
+                  <DeleteForeverIcon />
+                </p>
+                <p style={{ fontSize: "6px" }}>{image.name}</p>
+              </Box>
+            )}
             <TextField
               type="text"
               name="user_id"
@@ -145,12 +171,7 @@ export const MyProfileModal = () => {
               onChange={(event: any) => setAge(event.target.value)}
             />
             <Button onClick={onClickUpload} variant="contained">
-              <Link
-                to={`/${userId}`}
-                style={{ textDecoration: "none", color: "white" }}
-              >
-                更新する
-              </Link>
+              更新する
             </Button>
           </Box>
         </Box>

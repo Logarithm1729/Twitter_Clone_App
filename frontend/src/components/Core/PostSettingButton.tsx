@@ -65,17 +65,17 @@ export default function PostSettingButton(props: PROPS_SETTING_BUTTON) {
       >
         {isAuthentication() && (
           <Box>
-            <MenuItem onClick={handleClose}>
-              <span
-                onClick={async () => {
-                  await dispatch(startIsPosting());
-                  const res = await dispatch(asyncDeletePost(post_id));
-                  if (asyncDeletePost.fulfilled.match(res)) {
-                    await dispatch(asyncGetAllPosts());
-                    await dispatch(endIsPosting());
-                  }
-                }}
-              >
+            <span
+              onClick={async () => {
+                await dispatch(startIsPosting());
+                const res = await dispatch(asyncDeletePost(post_id));
+                if (asyncDeletePost.fulfilled.match(res)) {
+                  await dispatch(asyncGetAllPosts());
+                  await dispatch(endIsPosting());
+                }
+              }}
+            >
+              <MenuItem onClick={handleClose}>
                 <Box
                   display="flex"
                   color="red"
@@ -84,8 +84,8 @@ export default function PostSettingButton(props: PROPS_SETTING_BUTTON) {
                   削除
                   <DeleteIcon />
                 </Box>
-              </span>
-            </MenuItem>
+              </MenuItem>
+            </span>
           </Box>
         )}
       </Menu>

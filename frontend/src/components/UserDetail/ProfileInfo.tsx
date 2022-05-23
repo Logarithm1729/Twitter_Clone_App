@@ -2,12 +2,15 @@ import { Button } from "@mui/material";
 import { Box } from "@mui/system";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import CircularProgress from "@mui/material/CircularProgress";
+
 import { AppDispatch } from "../../app/store";
 import {
   asyncDeleteFollowing,
   asyncGetFollows,
   asyncPostFollowing,
   selectAllFollow,
+  selectIsLoading,
   selectMyprofile,
 } from "../../features/auth/authSlice";
 import { defaultImage } from "../../types/auth_types";
@@ -31,10 +34,11 @@ export const ProfileInfo = (props: PROPS_PROF_INFO) => {
   const { profileInfo, onClickEditProfile } = props;
   const [onFollowButton, setOnFollowButton] = useState(false);
 
+  // define redux state
   const dispatch: AppDispatch = useDispatch();
-
   const myprofile = useSelector(selectMyprofile);
   const allFollows = useSelector(selectAllFollow);
+  const isLoading = useSelector(selectIsLoading);
 
   const myFollowingUsersList = allFollows.filter((follow) => {
     return follow.userFollowing === myprofile.userProfile;
@@ -89,17 +93,23 @@ export const ProfileInfo = (props: PROPS_PROF_INFO) => {
         display="flex"
         sx={{ justifyContent: "space-between", alignItems: "center" }}
       >
-        <img
-          src={profileInfo?.prof_image ? profileInfo.prof_image : defaultImage}
-          alt="prof"
-          width="100px"
-          height="100px"
-          style={{
-            borderRadius: "50%",
-            border: "solid 1px #c5c5c5",
-            objectFit: "cover",
-          }}
-        />
+        {isLoading ? (
+          <CircularProgress />
+        ) : (
+          <img
+            src={
+              profileInfo?.prof_image ? profileInfo.prof_image : defaultImage
+            }
+            alt="prof"
+            width="100px"
+            height="100px"
+            style={{
+              borderRadius: "50%",
+              border: "solid 1px #c5c5c5",
+              objectFit: "cover",
+            }}
+          />
+        )}
         {onClickEditProfile !== null ? (
           <Button
             variant="outlined"
@@ -160,11 +170,16 @@ export const ProfileInfo = (props: PROPS_PROF_INFO) => {
       </Box>
       <Box className="created-at"></Box>
       <Box className="following-follower" display="flex">
-        <Box className="following" mr={2} display="flex" sx={{ alignItems: "center" }}>
+        <Box
+          className="following"
+          mr={2}
+          display="flex"
+          sx={{ alignItems: "center" }}
+        >
           <p>フォロー中</p>
           <p>{culcFollowing()}</p>
         </Box>
-        <Box className="follower"  display="flex" sx={{ alignItems: "center" }}>
+        <Box className="follower" display="flex" sx={{ alignItems: "center" }}>
           <p>フォロワー</p>
           <p>{culcFollower()}</p>
         </Box>

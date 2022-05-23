@@ -136,7 +136,7 @@ export const LeftAppbar = () => {
                     fontSize: "12px",
                     fontWeight: "600",
                     marginBottom: "2px",
-                    marginRight: '3px'
+                    marginRight: "3px",
                   }}
                 >
                   login...
@@ -144,29 +144,29 @@ export const LeftAppbar = () => {
                 <p>{myprofile.username}</p>
               </Box>
             </MenuItem>
-            <MenuItem>
-              <Link
-                to={`/${myprofile.user_id}`}
-                style={{ textDecoration: "none", color: "black" }}
-              >
+            <Link
+              to={`/${myprofile.user_id}`}
+              style={{ textDecoration: "none", color: "black" }}
+            >
+              <MenuItem>
                 <Box display="flex" sx={{ alignItems: "center" }}>
                   <PersonIcon />
                   <p>アカウント</p>
                 </Box>
-              </Link>
-            </MenuItem>
-            <MenuItem
-              onClick={async () => {
-                await onClickLogout();
-              }}
-            >
-              <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+              </MenuItem>
+            </Link>
+            <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+              <MenuItem
+                onClick={async () => {
+                  await onClickLogout();
+                }}
+              >
                 <Box display="flex">
                   <LogoutIcon />
                   <p>ログアウト</p>
                 </Box>
-              </Link>
-            </MenuItem>
+              </MenuItem>
+            </Link>
           </Menu>
         </Box>
       </Stack>

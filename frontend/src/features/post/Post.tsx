@@ -1,16 +1,12 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Button,
-  CircularProgress,
-  Modal,
-  Stack,
-} from "@mui/material";
+import { Button, CircularProgress, Modal, Stack } from "@mui/material";
 import { Box } from "@mui/system";
 import { TextField } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import TwitterIcon from "@mui/icons-material/Twitter";
 import { PhotoCamera } from "@mui/icons-material";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 import { AppDispatch } from "../../app/store";
 import styles from "./Post.module.css";
@@ -54,7 +50,7 @@ export const Post = () => {
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [postImg, setPostImg] = useState(null);
+  const [postImg, setPostImg] = useState<null | File>(null);
 
   const editPostImage = () => {
     const target = document.getElementById("modal-post-image");
@@ -74,6 +70,9 @@ export const Post = () => {
       await dispatch(asyncGetAllComments());
       await dispatch(asyncGetLikes());
       await dispatch(endOpenNewPost());
+      await setPostImg(null);
+      await setTitle("");
+      await setContent("");
       await dispatch(endIsPosting());
     }
   };
@@ -128,12 +127,45 @@ export const Post = () => {
                 type="file"
                 style={{ display: "none" }}
                 onChange={(event: any) => {
-                  setPostImg(event.target.files[0]);
+                  // detecting cancel event
+                  if (event.target.files.length > 0) {
+                    setPostImg(event.target.files[0]);
+                  } else {
+                    setPostImg(null);
+                  }
                 }}
               />
-              <label style={{ textAlign: "center" }} onClick={editPostImage}>
-                <PhotoCamera />
-              </label>
+              {postImg === null ? (
+                <Box
+                  onClick={editPostImage}
+                  display="flex"
+                  sx={{
+                    cursor: "pointer",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    color: "#3f79bb",
+                  }}
+                >
+                  <PhotoCamera />
+                </Box>
+              ) : (
+                <Box
+                  display="flex"
+                  sx={{
+                    cursor: "pointer",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                  onClick={() => setPostImg(null)}
+                >
+                  <p style={{ color: "red" }}>
+                    <DeleteForeverIcon />
+                  </p>
+                  <p>{postImg.name}</p>
+                </Box>
+              )}
               <Button
                 variant="contained"
                 endIcon={<TwitterIcon />}

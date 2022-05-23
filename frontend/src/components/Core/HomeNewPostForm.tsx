@@ -1,6 +1,7 @@
 import { PhotoCamera } from "@mui/icons-material";
 import { Button, TextField } from "@mui/material";
 import { Box } from "@mui/system";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../app/store";
@@ -17,7 +18,7 @@ export const HomeNewPostForm = () => {
   const dispatch: AppDispatch = useDispatch();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [postImg, setPostImg] = useState(null);
+  const [postImg, setPostImg] = useState<null | File>(null);
 
   const editPostImage = () => {
     const target = document.getElementById("home-post-image");
@@ -89,9 +90,10 @@ export const HomeNewPostForm = () => {
           />
         </Box>
         <Box
+          display="flex"
           sx={{
             width: "80%",
-            display: "flex",
+            alignItems: "center",
             justifyContent: "space-between",
           }}
         >
@@ -101,13 +103,41 @@ export const HomeNewPostForm = () => {
               type="file"
               // multiple
               style={{ display: "none" }}
+              accept="image/png, image/jpeg"
               onChange={async (event: any) => {
-                await setPostImg(event.target.files[0]);
+                if (event.target.files.length > 0) {
+                  setPostImg(event.target.files[0]);
+                } else {
+                  setPostImg(null);
+                }
               }}
             />
-            <span onClick={editPostImage} style={{ cursor: "pointer" }}>
-              <PhotoCamera />
-            </span>
+            {postImg === null ? (
+              <Box
+                onClick={editPostImage}
+                display="flex"
+                sx={{
+                  cursor: "pointer",
+                  color: "#3f79bb",
+                }}
+              >
+                <PhotoCamera />
+              </Box>
+            ) : (
+              <Box
+                display="flex"
+                sx={{
+                  cursor: "pointer",
+                  alignItems: "center",
+                }}
+                onClick={() => setPostImg(null)}
+              >
+                <p style={{ color: "red" }}>
+                  <DeleteForeverIcon />
+                </p>
+                <p style={{ paddingBottom: "7px" }}>{postImg.name}</p>
+              </Box>
+            )}
           </label>
           <Button
             variant="contained"

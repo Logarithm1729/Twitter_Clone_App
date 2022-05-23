@@ -256,6 +256,12 @@ export const authSlice = createSlice({
     builder.addCase(asyncGetFollows.fulfilled, (state, action) => {
       state.follows = action.payload;
     });
+    builder.addCase(asyncUpdateMyProfile.fulfilled, (state, action) => {
+      state.myProfile = action.payload;
+      state.allProfiles = state.allProfiles.map((prof) => {
+        return prof.id === action.payload.id ? (prof = action.payload) : prof;
+      });
+    });
   },
 });
 

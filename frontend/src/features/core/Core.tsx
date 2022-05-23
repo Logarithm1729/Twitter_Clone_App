@@ -32,8 +32,6 @@ export const Core = () => {
     return showUsers.includes(post.userPost);
   });
 
-  console.log(myFollowingUsersPosts);
-
   return (
     <div className={styles.core_container}>
       <LeftAppbar />
