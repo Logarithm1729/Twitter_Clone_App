@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Modal from "@mui/material/Modal";
 import { Box, Button, CircularProgress, TextField } from "@mui/material";
@@ -66,6 +66,8 @@ export const Auth: React.FC = () => {
   const openSignIn = useSelector(selectOpenSignIn);
   const openSignUp = useSelector(selectOpenSignUp);
   const isLoading = useSelector(selectIsLoading);
+  const [signInError, setSignInError] = useState("");
+  const [signUpError, setSignUpError] = useState("");
 
   return (
     <div>
@@ -79,6 +81,13 @@ export const Auth: React.FC = () => {
             <h2 className={styles.auth_title}>Twitter</h2>
             <br />
             <h3 className={styles.auth_subtitle}>Twitterにログイン</h3>
+            {signInError !== "" && (
+              <span
+                style={{ fontSize: "13px", color: "red", paddingTop: "13px" }}
+              >
+                {signInError}
+              </span>
+            )}
             <br />
             <Formik
               initialValues={{ email: "", password: "" }}
@@ -88,6 +97,7 @@ export const Auth: React.FC = () => {
                 await dispatch(startLoading());
                 const res = await dispatch(asyncTakeToken(values));
                 if (asyncTakeToken.fulfilled.match(res)) {
+                  window.location.href = "/";
                   await dispatch(asyncGetMyProfile());
                   await dispatch(asyncGetAllProfiles());
                   await dispatch(asyncGetAllPosts());
@@ -97,6 +107,10 @@ export const Auth: React.FC = () => {
                   await dispatch(endSignIn());
                   await dispatch(startLogin());
                   await dispatch(endLoading());
+                } else if (asyncTakeToken.rejected.match(res)) {
+                  await dispatch(endLoading());
+                  await setSignInError("入力情報に誤りがあります");
+                  await dispatch(startSignIn());
                 }
               }}
             >
@@ -183,6 +197,13 @@ export const Auth: React.FC = () => {
             <h2 className={styles.auth_title}>Twitter</h2>
             <br />
             <h3 className={styles.auth_subtitle}>Twitterに登録</h3>
+            {signUpError !== "" && (
+              <span
+                style={{ fontSize: "13px", color: "red", paddingTop: "13px" }}
+              >
+                {signUpError}
+              </span>
+            )}
             <br />
             <Formik
               initialValues={{
@@ -199,6 +220,7 @@ export const Auth: React.FC = () => {
                 const res = await dispatch(asyncUserRegister(values));
                 if (asyncUserRegister.fulfilled.match(res)) {
                   await dispatch(asyncTakeToken(values));
+                  window.location.href = "/";
                   await dispatch(asyncGetMyProfile());
                   await dispatch(asyncGetAllProfiles());
                   await dispatch(asyncGetAllPosts());
@@ -208,6 +230,10 @@ export const Auth: React.FC = () => {
                   await dispatch(endSignUp());
                   await dispatch(startLogin());
                   await dispatch(endLoading());
+                } else if (asyncUserRegister.rejected.match(res)) {
+                  await dispatch(endLoading());
+                  await setSignUpError("このEメールは既に使用されています");
+                  await dispatch(startSignUp());
                 }
               }}
             >

@@ -14,6 +14,7 @@ import {
   selectMyprofile,
 } from "../../features/auth/authSlice";
 import { defaultImage } from "../../types/auth_types";
+import { Link } from "react-router-dom";
 
 interface PROPS_PROF_INFO {
   profileInfo:
@@ -170,19 +171,33 @@ export const ProfileInfo = (props: PROPS_PROF_INFO) => {
       </Box>
       <Box className="created-at"></Box>
       <Box className="following-follower" display="flex">
-        <Box
-          className="following"
-          mr={2}
-          display="flex"
-          sx={{ alignItems: "center" }}
+        <Link
+          to={`/${profileInfo?.user_id}/follow/`}
+          style={{ textDecoration: "none", color: "black" }}
         >
-          <p>フォロー中</p>
-          <p>{culcFollowing()}</p>
-        </Box>
-        <Box className="follower" display="flex" sx={{ alignItems: "center" }}>
-          <p>フォロワー</p>
-          <p>{culcFollower()}</p>
-        </Box>
+          <Box
+            className="following"
+            mr={2}
+            display="flex"
+            sx={{ alignItems: "center" }}
+          >
+            <p>フォロー中</p>
+            <p>{culcFollowing()}</p>
+          </Box>
+        </Link>
+        <Link
+          to={`/${profileInfo?.user_id}/follower/`}
+          style={{ textDecoration: "none", color: "black" }}
+        >
+          <Box
+            className="follower"
+            display="flex"
+            sx={{ alignItems: "center" }}
+          >
+            <p>フォロワー</p>
+            <p>{culcFollower()}</p>
+          </Box>
+        </Link>
       </Box>
     </Box>
   );

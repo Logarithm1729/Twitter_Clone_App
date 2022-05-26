@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "@mui/material/Modal";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { Box } from "@mui/system";
@@ -48,7 +48,8 @@ export const MyProfileModal = () => {
   const [userId, setUserId] = useState(myprofile.user_id);
   const [username, setUsername] = useState(myprofile.username);
   const [age, setAge] = useState(myprofile.age);
-  console.log(image);
+  const [errorOfUserId, setErrorOfUserId] = useState("");
+  const [isChange, setIsChange] = useState(false);
 
   const connectSpanToInput = () => {
     const target = document.getElementById("profile-image");
@@ -76,6 +77,9 @@ export const MyProfileModal = () => {
         await dispatch(endProfile());
         await dispatch(endLoading());
       }
+    } else if (asyncUpdateMyProfile.rejected.match(res)) {
+      await setErrorOfUserId("このIDは既に使用されています");
+      await dispatch(endLoading());
     }
   };
 
@@ -89,7 +93,13 @@ export const MyProfileModal = () => {
         <Box sx={{ width: "100%", height: "100%" }}>
           <CloseIcon
             sx={{ top: "0", left: "0", cursor: "pointer" }}
-            onClick={() => dispatch(endProfile())}
+            onClick={() => {
+              dispatch(endProfile());
+              setImage(null);
+              setUserId(myprofile.user_id);
+              setUsername(myprofile.username);
+              setAge(myprofile.age);
+            }}
           />
           <Box
             display="flex"
@@ -117,6 +127,7 @@ export const MyProfileModal = () => {
               onChange={(event: any) => {
                 if (event.target.files.length > 0) {
                   setImage(event.target.files[0]);
+                  setIsChange(true);
                 } else {
                   setImage(null);
                 }
@@ -143,15 +154,35 @@ export const MyProfileModal = () => {
                 <p style={{ fontSize: "6px" }}>{image.name}</p>
               </Box>
             )}
-            <TextField
-              type="text"
-              name="user_id"
-              label="ユーザーID"
-              variant="standard"
-              defaultValue={myprofile.user_id}
-              sx={{ marginBottom: "10px", width: "70%" }}
-              onChange={(event: any) => setUserId(event.target.value)}
-            />
+            {errorOfUserId === "" ? (
+              <TextField
+                type="text"
+                name="user_id"
+                label="ユーザーID"
+                variant="standard"
+                defaultValue={myprofile.user_id}
+                sx={{ marginBottom: "10px", width: "70%" }}
+                onChange={(event: any) => {
+                  setUserId(event.target.value);
+                  setIsChange(true);
+                }}
+              />
+            ) : (
+              <TextField
+                error
+                type="text"
+                name="user_id"
+                label="ユーザーID"
+                variant="standard"
+                defaultValue={myprofile.user_id}
+                sx={{ marginBottom: "10px", width: "70%" }}
+                onChange={(event: any) => {
+                  setUserId(event.target.value);
+                  setIsChange(true);
+                }}
+                helperText={errorOfUserId}
+              />
+            )}
             <TextField
               type="text"
               name="username"
@@ -159,7 +190,10 @@ export const MyProfileModal = () => {
               variant="standard"
               defaultValue={myprofile.username}
               sx={{ marginBottom: "10px", width: "70%" }}
-              onChange={(event: any) => setUsername(event.target.value)}
+              onChange={(event: any) => {
+                setUsername(event.target.value);
+                setIsChange(true);
+              }}
             />
             <TextField
               type="number"
@@ -168,9 +202,16 @@ export const MyProfileModal = () => {
               variant="standard"
               defaultValue={myprofile.age}
               sx={{ marginBottom: "20px", width: "70%" }}
-              onChange={(event: any) => setAge(event.target.value)}
+              onChange={(event: any) => {
+                setAge(event.target.value);
+                setIsChange(true);
+              }}
             />
-            <Button onClick={onClickUpload} variant="contained">
+            <Button
+              onClick={onClickUpload}
+              variant="contained"
+              disabled={!isChange}
+            >
               更新する
             </Button>
           </Box>
