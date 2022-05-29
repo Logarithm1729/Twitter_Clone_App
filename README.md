@@ -24,8 +24,10 @@ Redux tool kit
 # Installation
 Dockerfile参照
 
-# Note
-デプロイがまだされておらず、今現在学習中...
+# I learned what
+何も計画せずにとりあえずAPIを作り、とりあえず必要なComponentを作っていった。
+あとでこんな構成にしておけばよかったと思うことが多くあった。
+初めにどのような構造で開発するのかを決めることがどれだけ大事かを学ぶことがこのアプリ開発をすすめる中で学んだ。
 
 # Author
 * Logarithm
