@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import axios from "axios";
 
@@ -132,6 +132,7 @@ export const asyncPostFollowing = createAsyncThunk(
     const res = await axios.post(`${API_URL}/rest_api/compose/follow/`, info, {
       headers: {
         Authorization: `JWT ${localStorage.localJWT}`,
+        "Content-Type": "application/json",
       },
     });
     return res.data;

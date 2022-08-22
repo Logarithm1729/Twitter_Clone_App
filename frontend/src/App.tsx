@@ -37,7 +37,7 @@ function App() {
       }
     };
     fetchBootLoader();
-  }, [dispatch, window]);
+  }, [dispatch]);
 
   return (
     <div className={styles.app}>

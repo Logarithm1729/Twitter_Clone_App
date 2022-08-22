@@ -130,6 +130,7 @@ export const ProfileInfo = (props: PROPS_PROF_INFO) => {
                 userFollowing: myprofile.userProfile,
                 userFollower: profileInfo?.userProfile,
               };
+              console.log(followInfo)
               dispatch(asyncPostFollowing(followInfo));
             }}
           >

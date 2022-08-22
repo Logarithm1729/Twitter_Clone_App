@@ -2,21 +2,22 @@ version: "3"
 
 volumes:
   db_volume:
+  node_modules_volume:
 
 services:
   db:
-    container_name: django_db
+    container_name: twitter_db
     image: postgres:11.2
     volumes:
       - db_volume:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=Logarithm
+    # environment:
+    #   - POSTGRES_USER=admin
+    #   - POSTGRES_PASSWORD=Logarithm
       # - POSTGRES_HOST_AUTH_METHOD=trust
     ports:
       - 5432:5432
   backend:
-    container_name: django_rest_api
+    container_name: twitter_rest_api
     build:
       context: .
       dockerfile: DockerfileBack
@@ -24,29 +25,26 @@ services:
       - ./backend:/code
     tty: true
     stdin_open: true
+    command: python manage.py runserver 0:8000
     ports:
       - 8000:8000
     restart: always
     depends_on:
       - db
   frontend:
-    container_name: front_node_js
+    container_name: twitter_node_js
     build:
       context: .
       dockerfile: DockerfileFront
     volumes:
       - ./frontend:/code
+      - node_modules_volume:/code/node_modules
     tty: true
+    entrypoint: "bash -c 'npm install && yarn start'"
     stdin_open: true
+    command: yarn start
     ports:
       - 3000:3000
     restart: always
     depends_on:
       - backend
-  # gitLab:
-  #   image: gitlab/gitlab-ce:rc
-  #   restart: always
-  #   hostname: 'gitlab'
-  #   environment:
-  #     GITLAB_OMNIBUS_CONFIG: |
-  #       external_url: 'https://gitlab.'
